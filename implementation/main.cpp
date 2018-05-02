@@ -1,3 +1,5 @@
+#undef NDEBUG
+
 #include <iostream>
 #include <fstream>
 #include <cassert>
@@ -7,7 +9,7 @@
 #include "generators.h"
 #include "common.h"
 #include "bruteforce.h"
-#include "dp_n8.h"
+#include "dp.h"
 
 std::ostream* debug = new std::ofstream();
 std::ostream* out = new std::ofstream();
@@ -44,17 +46,21 @@ void QueryAllSolutions(const TAdjacencyMatrix& graph, const std::vector<std::uni
     }
 }
 
-std::vector<std::unique_ptr<ISolution>> CreateSolutions(const TAdjacencyMatrix& graph)
+std::vector<std::unique_ptr<ISolution>> CreateSolutions()
 {
     std::vector<std::unique_ptr<ISolution>> solutions;
-    solutions.emplace_back(CreateBruteforceSolution(graph));
-    solutions.emplace_back(CreateDynamicProgrammingN8Solution(graph));
+    solutions.emplace_back(CreateBruteforceSolution());
+    solutions.emplace_back(CreateDynamicProgrammingN8Solution());
+    solutions.emplace_back(CreateDynamicProgrammingN7Solution());
     return solutions;
 }
 
 void MakeAllQueries(const TAdjacencyMatrix& graph)
 {
-    auto solutions = CreateSolutions(graph);
+    auto solutions = CreateSolutions();
+    for (const auto& solution : solutions) {
+        solution->Initialize(graph);
+    }
     for (int s1 = 0; s1 < graph.size(); ++s1) {
         for (int t1 = 0; t1 < graph.size(); ++t1) {
             for (int s2 = 0; s2 < graph.size(); ++s2) {
@@ -80,7 +86,10 @@ void ReadFromStdin()
         int queryCount;
         std::cin >> queryCount;
         if (queryCount) {
-            auto solutions = CreateSolutions(graph);
+            auto solutions = CreateSolutions();
+            for (const auto& solution : solutions) {
+                solution->Initialize(graph);
+            }
             for (int i = 0; i < queryCount; ++i) {
                 int s1, t1, s2, t2;
                 std::cin >> s1 >> t1 >> s2 >> t2;
@@ -92,6 +101,16 @@ void ReadFromStdin()
     }
 }
 
+void ShowHelp() {
+    std::cerr << "Usage: ./main (--stdin|--all|--random) [-v] [-n N] [-t T] [--dump-failed] [-h]" << std::endl;
+    std::cerr << "Compiled solutions:";
+    auto solutions = CreateSolutions();
+    for (const auto& solution : solutions) {
+        std::cerr << " " << solution->Description();
+    }
+    std::cerr << std::endl;
+}
+
 int main(int argc, char* argv[])
 {
     bool readFromStdin = false;
@@ -101,6 +120,7 @@ int main(int argc, char* argv[])
     int n = -1;
     int t = -1;
     int seed = -1;
+    bool help = false;
     for (int i = 1; i < argc; ++i) {
         if (strcmp(argv[i], "-v") == 0) {
             debug = &std::cerr;
@@ -132,6 +152,13 @@ int main(int argc, char* argv[])
             seed = atoi(argv[i + 1]);
             ++i;
         }
+        if (strcmp(argv[i], "-h") == 0) {
+            help = true;
+        }
+    }
+    if (help) {
+        ShowHelp();
+        return 0;
     }
     srand(seed);
     assert(readFromStdin + generateAll + generateRandom == 1);

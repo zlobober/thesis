@@ -18,6 +18,8 @@ bool ReadGraph(TAdjacencyMatrix& graph);
 
 struct ISolution
 {
+    virtual void Initialize(TAdjacencyMatrix graph) = 0;
     virtual bool TwoShortestPathsExist(int s1, int t1, int s2, int t2) = 0;
     virtual std::string Description() const = 0;
+    virtual ~ISolution() = default;
 };

@@ -2,4 +2,4 @@
 
 #include "common.h"
 
-std::unique_ptr<ISolution> CreateBruteforceSolution(TAdjacencyMatrix graph);
+std::unique_ptr<ISolution> CreateBruteforceSolution();

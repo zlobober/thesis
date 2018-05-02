@@ -8,9 +8,10 @@ class TBruteforceSolution
     : public ISolution
 {
 public:
-    TBruteforceSolution(TAdjacencyMatrix graph)
-        : Graph_(std::move(graph))
-    { }
+    virtual void Initialize(TAdjacencyMatrix graph) override
+    {
+        Graph_ = std::move(graph);
+    }
 
     virtual std::string Description() const override
     {
@@ -61,7 +62,7 @@ private:
     }
 };
 
-std::unique_ptr<ISolution> CreateBruteforceSolution(TAdjacencyMatrix graph)
+std::unique_ptr<ISolution> CreateBruteforceSolution()
 {
-    return std::make_unique<TBruteforceSolution>(std::move(graph));
+    return std::make_unique<TBruteforceSolution>();
 }
