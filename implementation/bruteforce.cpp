@@ -1,5 +1,6 @@
 #include "bruteforce.h"
 
+#include <string>
 #include <queue>
 #include <iostream>
 
@@ -11,7 +12,7 @@ public:
         : Graph_(std::move(graph))
     { }
 
-    virtual std::__cxx11::string Description() const override
+    virtual std::string Description() const override
     {
         return "bruteforce";
     }
