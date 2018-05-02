@@ -11,6 +11,11 @@ std::vector<int> CalculateDistances(const TAdjacencyMatrix& graph, int s, const 
 //! Calculate all pairwise distances using the Floyd-Warshall algorithm.
 std::vector<std::vector<int>> CalculateAllPairDistances(const TAdjacencyMatrix& graph);
 
+bool IsConnected(const TAdjacencyMatrix& graph);
+
+void PrintGraph(const TAdjacencyMatrix& graph);
+bool ReadGraph(TAdjacencyMatrix& graph);
+
 struct ISolution
 {
     virtual bool TwoShortestPathsExist(int s1, int t1, int s2, int t2) = 0;
