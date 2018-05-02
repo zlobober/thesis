@@ -22,3 +22,34 @@ std::vector<int> CalculateDistances(const TAdjacencyMatrix& graph, int s, const 
     }
     return distances;
 }
+
+std::vector<std::vector<int>> CalculateAllPairDistances(const TAdjacencyMatrix& graph)
+{
+    std::vector<std::vector<int>> distances(graph.size(), std::vector<int>(graph.size()));
+    for (int i = 0; i < graph.size(); i++) {
+        for (int j = 0; j < graph.size(); j++) {
+            if (i == j) {
+                distances[i][j] = 0;
+            } else if (graph[i][j]) {
+                distances[i][j] = 1;
+            } else {
+                distances[i][j] = graph.size();
+            }
+        }
+    }
+    for (int k = 0; k < graph.size(); k++) {
+        for (int i = 0; i < graph.size(); i++) {
+            for (int j = 0; j < graph.size(); j++) {
+                distances[i][j] = std::min(distances[i][j], distances[i][k] + distances[k][j]);
+            }
+        }
+    }
+    for (int i = 0; i < graph.size(); i++) {
+        for (int j = 0; j < graph.size(); j++) {
+            if (distances[i][j] == graph.size()) {
+                distances[i][j] = -1;
+            }
+        }
+    }
+    return distances;
+}
