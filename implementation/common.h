@@ -1,5 +1,7 @@
 #pragma once
 
+#undef NDEBUG
+
 #include <memory>
 #include <vector>
 

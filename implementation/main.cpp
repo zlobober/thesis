@@ -1,13 +1,11 @@
-#undef NDEBUG
-
 #include <iostream>
 #include <fstream>
 #include <cassert>
 #include <vector>
 #include <cstring>
 
-#include "generators.h"
 #include "common.h"
+#include "generators.h"
 #include "bruteforce.h"
 #include "dp.h"
 
@@ -52,6 +50,7 @@ std::vector<std::unique_ptr<ISolution>> CreateSolutions()
     solutions.emplace_back(CreateBruteforceSolution());
     solutions.emplace_back(CreateDynamicProgrammingN8Solution());
     solutions.emplace_back(CreateDynamicProgrammingN7Solution());
+    solutions.emplace_back(CreateDynamicProgrammingN6Solution());
     return solutions;
 }
 
@@ -156,12 +155,15 @@ int main(int argc, char* argv[])
             help = true;
         }
     }
+    assert(readFromStdin + generateAll + generateRandom <= 1);
+    if (readFromStdin + generateAll + generateRandom == 0) {
+        help = true;
+    }
     if (help) {
         ShowHelp();
         return 0;
     }
     srand(seed);
-    assert(readFromStdin + generateAll + generateRandom == 1);
 
     if (readFromStdin) {
         ReadFromStdin();
