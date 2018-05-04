@@ -33,6 +33,7 @@ citecolor=black, menucolor=black, filecolor=black,
 \geometry{left=30mm}
 
 \newcommand{\OO}{\mathcal{O}}
+\newcommand{\sm}{\setminus}
 
 % Произвольная нумерация списков.
 \usepackage{enumerate}
@@ -43,3 +44,18 @@ citecolor=black, menucolor=black, filecolor=black,
 %2 это chapter, section, и subsection
 %1 это chapter и section
 %0 это chapter.
+
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\theoremstyle{definition}
+\newtheorem{theorem}{Теорема}
+\newtheorem{proposition}[theorem]{Предложение}
+\newtheorem{corollary}[theorem]{Следствие}
+\newtheorem{lemma}[theorem]{Лемма}
+\newtheorem{definition}[theorem]{Определение}
+\newtheorem{example}[theorem]{Пример}
+\newtheorem{remark}[theorem]{Замечание}
+
+
+\makeatletter
+\def\Let@{\def\\{\notag\math@cr}}
+\makeatother
