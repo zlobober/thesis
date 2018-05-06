@@ -51,6 +51,7 @@ std::vector<std::unique_ptr<ISolution>> CreateSolutions()
     solutions.emplace_back(CreateDynamicProgrammingN8Solution());
     solutions.emplace_back(CreateDynamicProgrammingN7Solution());
     solutions.emplace_back(CreateDynamicProgrammingN6Solution());
+    solutions.emplace_back(CreateDynamicProgrammingN6OptimizedSolution());
     return solutions;
 }
 
