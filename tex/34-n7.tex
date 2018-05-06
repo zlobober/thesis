@@ -1,3 +1,221 @@
 \chapter{Оптимизация времени работы до $\Theta(|V|^7)$}
 
-Отметим
+Из всего вышеизложенного видно, что в первую очередь следует добиться ускорения тех вычислений в алгоритме \ref{alg:main}, которые скрыты в строке \ref{line:cQ4}, так как все остальные действий в алгоритме требуют всего $\OO(|V|^6)$ времени.
+
+Упростим формулу вычисления величины $Q_4(s_1, t_1, s_2, t_2)$. Обозначим первое и второе выражение в правой части формулы \eqref{eq:Q4} за $A_4(s_1, t_1, s_2, t_2)$ и $A'_4(s_1, t_1, s_2, t_2)$:
+
+\begin{equation} \label{eq:A} 
+    A(s_1, t_1, s_2, t_2) = \quad
+        \smashoperator{\bigvee_{
+        \large \substack{
+            x \in F(s_1, s_2)\\ 
+            y \in F(t_1, t_2)\\ 
+            u \in F(s_2, t_1)\\ 
+            v \in F(t_2, s_1)\\ 
+            l(x, y) + 2 = l(s_1, t_1)\\ 
+            l(u, v) + 2 = l(s_2, t_2)
+        }
+        }} 2DSP(x, y, u, v)
+\end{equation}
+\begin{equation} \label{eq:B}
+   B(s_1, t_1, s_2, t_2) = \quad
+        \smashoperator{\bigvee_{
+        \large \substack{
+            x \in F(s_1, t_2)\\ 
+            y \in F(t_1, s_2)\\ 
+            u \in F(s_2, s_1)\\ 
+            v \in F(t_2, t_1)\\ 
+            l(x, y) + 2 = l(s_1, t_1)\\ 
+            l(u, v) + 2 = l(s_2, t_2)
+        }
+        }} 2DSP(x, y, u, v)
+\end{equation}
+\begin{proposition}
+Верно соотношение:
+\begin{equation}
+    B(s_1, t_1, s_2, t_2) = A(s_2, t_2, s_1, t_1)
+\end{equation}
+\end{proposition}
+\begin{proof}
+Немедленно следует из того, что между наборами $(x, y, u, v)$, удовлетворяющими условиям $x \in F(s_2, s_1)$, $y \in F(t_2, t_1)$, $u \in F(s_1, t_2)$, $v \in F(t_1, s_2)$, $l(x, y) + 2 = l(s_2, t_2)$, $l(u, v) + 2 = l(s_1, t_1)$ (а именно по ним берётся дизъюнкция в формуле для $A(s_2, t_2, s_1, t_1)$) и наборами $(x', y', u', v')$, удовлетворяющими услоиям $x' \in F(s_1, t_2)$, $y' \in F(t_1, s_2)$, $u' \in F(s_2, s_1)$, $v' \in F(t_2, t_1)$, $l(x', y') + 2 = l(s_1, t_1)$, $l(u', v') + 2 = l(s_2, t_2)$, есть биекция $x' = u$, $y' = v$, $u' = x$, $v' = y$.
+\end{proof}
+
+Значит, можно переписать формулу для $Q_4(s_1, t_1, s_2, t_2)$ только с использованием значений предиката $A$:
+
+\begin{equation} \label{eq:Q4A}
+Q_4(s_1, t_1, s_2, t_2) = A(s_1, t_1, s_2, t_2) \vee A(s_2, t_2, s_1, t_1)
+\end{equation}
+
+Теперь перепишем формулу \eqref{eq:A} в более подходящей форме. Для этого мы немного видоизменим условия, налагаемые на $(x, y, u, v)$ в формуле \eqref{eq:A}, оставив их при этом эквивалентными.
+
+\begin{proposition}
+
+\begin{equation}
+\begin{cases}
+    x \in F(s_1, s_2)\\ 
+    y \in F(t_1, t_2)\\ 
+    u \in F(s_2, t_1)\\ 
+    v \in F(t_2, s_1)\\ 
+    l(x, y) + 2 = l(s_1, t_1)\\ 
+    l(u, v) + 2 = l(s_2, t_2)
+\end{cases} \Longleftrightarrow
+\begin{cases}
+    x \in F(s_1, t_1, s_2)\\ 
+    y \in F(t_1, s_1, t_2)\\ 
+    u \in F(s_2, t_2, t_1)\\ 
+    v \in F(t_2, s_2, s_1)\\ 
+    l(x, y) + 2 = l(s_1, t_1)\\ 
+    l(u, v) + 2 = l(s_2, t_2)
+\end{cases} \Longleftrightarrow
+\begin{cases}
+    x \in F(s_1, t_1, s_2)\\ 
+    y \in F(t_1, x, t_2)\\ 
+    u \in F(s_2, t_2, t_1)\\ 
+    v \in F(t_2, u, s_1)\\ 
+\end{cases}
+\end{equation}
+\end{proposition}
+\begin{proof}
+Первый переход обусловлен тем, что условия $l(x, y) + 2 = l(s_1, t_1)$ и $l(u, v) + 2 = l(s_2, t_2)$ гарантируют, что $x, y \in L(s_1, t_1)$ и $u, v \in L(s_2, t_2)$, а значит, при их выполнении имеется равносильность условий $x \in F(s_1, s_2) \Leftrightarrow x \in f(s_1, t_1, s_2)$, а также три аналогичных равносильности для $y$, $u$ и $v$.
+
+Второй переход обусловлен тем, что, например, условие $l(x, y) + 2 = l(s_1, t_1)$, которое по сути означает, что $x$ и $y$ лежат на одном кратчайшем пути из $s_1$ в $t_1$, можно переписать равносильным образом как $x \in F(s_1, t_1) \wedge y \in F(t_1, x)$, и аналогично для переменных $s_2$, $t_2$, $u$ и $v$.
+\end{proof}
+
+Пользуясь установленным фактом, можно переписать формулу \eqref{eq:A} следующим образом:
+\begin{equation} 
+    A(s_1, t_1, s_2, t_2) = \quad
+        {\bigvee_{
+        \large \substack{
+            x \in F(s_1, t_1, s_2)\\ 
+            u \in F(s_2, t_2, t_1) 
+        }
+        }}
+        {\bigvee_{
+        \large \substack{
+            y \in F(t_1, x, t_2)\\ 
+            v \in F(t_2, u, s_1) 
+        }
+        }} 2DSP(x, y, u, v)
+\end{equation}
+
+Заметим важную деталь --- выражение под первым знаком дизъюнкции не зависит от $s_2$. Обозначим выражение, находящееся под первым знаком дизъюнкции, за $ExYV(x, u, s_1, t_1, t_2)$ (сокращённо от <<exist $y$ and $v$>>):
+
+\begin{align} \label{eq:ExYV}
+    A(s_1, t_1, s_2, t_2) &= \quad
+       \smashoperator{\bigvee_{
+        \large \substack{
+            x \in F(s_1, t_1, s_2)\\ 
+            u \in F(s_2, t_2, t_1) 
+        }
+        }} ExYV(x, u, s_1, t_1, t_2) \\
+    ExYV(x, u, s_1, t_1, t_2) &= \quad
+        \smashoperator{\bigvee_{
+        \large \substack{
+            y \in F(t_1, x, t_2)\\ 
+            v \in F(t_2, u, s_1) 
+        }
+        }} 2DSP(x, y, u, v) \\ 
+\end{align}
+
+В формулах выше можно увидеть конкретное место, в котором есть потенциал для оптимизации времени работы. Действительно, оказывается, что величина $A(s_1, t_1, s_2, t_2)$ зависит от всего $\OO(|V|^2)$ значений величины $ExYV(x, u, s_1, t_1, t_2)$. Таким образом, если к моменту вычисления $A(s_1, t_1, s_2, t_2)$ каким-то образом подготовить все необходимые значения $ExYV(x, u, s_1, t_1, t_2)$, то непосредственно вычисление всех $A(s_1, t_1, s_2, t_2)$ потребует всего $\OO(|V|^6)$ операций суммарно.
+
+Наконец, из формулы \eqref{eq:ExYV} также видно, что каждое отдельное значение $ExYV(x, u, s_1, t_1, t_2)$ вычисляется за $\OO(|V|^2)$. Таким образом, величина $ExYV(x, u, s_1, t_1, t_2)$ является удобным вспомогательным предикатом, который, с одной стороны, довольно быстро вычисляется (за $\OO(|V|^7)$ суммарно для всех значений аргументов), а с другой --- многократно переиспользуется при вычислении значений предиката $A(s_1, t_1, s_2, t_2)$ (сокращая необходимое количество вычислений до $\OO(|V|^6)$).
+
+Остаётся только убедиться, что мы по-прежнему можем организовать вычисления в таком порядке, чтобы к моменту использования каждого из значений в правых частях рекурсивных формул \eqref{eq:Q4A} и \eqref{eq:ExYV} оно уже было посчитано. Предъявим псевдокод алгоритма \ref{alg:n7}, реализующего вычисления именно таким образом. 
+
+\begin{algorithm}
+\caption{Вычисление всех значений $2DSP(s_1, t_1, s_2, t_2)$ за $O(|V|^7)$} \label{alg:n7}
+\begin{algorithmic}[1]
+\Procedure{CalculateAll2DSPValues}{$V$, $E$}z
+\State $l \gets \text{матрица попарных расстояний между вершинами в }G$; \label{line:floyd}
+\LineComment{Разобьём пары вершин на группы в соответствии с расстояними между ними.}
+\State $P_i \gets \text{пустой список для всех }i = 0, \ldots, |V|-1$;
+\For{$s,t \in V$}
+    \State $\text{добавляем }(s, t)\text{ в конец списка }P_{l(s, t)}$;
+\EndFor
+\LineComment{Вычислим значения предиката в порядке лексикографического возрастания}
+\LineComment{пары $(d_{\min}, d_{\max})$, где $d_{\min}$ это меньшее из расстояний между парами терминалов,}
+\LineComment{а $d_{\max}$ это большее.}
+\For{$d_{\min} = 0, \ldots, |V|-1$}
+    \State $\textsc{CalculateAllExYVValues}(d_{\min})$; \label{line:calcExYV}
+    \For{$d_{\max} = d_{\min}, \ldots, |V|-1$}
+        \For{$(s_1, t_1) \in P_{d_{\min}}$}
+            \For{$(s_2, t_2) \in P_{d_{\max}}$}
+                \State $2DSP(s_1, t_1, s_2, t_2) = \textsc{CalculateSingle2DSPValue}(s_1, t_1, s_2, t_2)$;
+                \State $2DSP(s_2, t_2, s_1, t_1) \gets 2DSP(s_1, t_1, s_2, t_2)$; \Comment{по симметрии}
+            \EndFor
+        \EndFor
+    \EndFor
+\EndFor
+\EndProcedure
+\Statex
+\Procedure{CalculateAllExYVValues}{$d$}
+    \For{$(s_1,t_1 \in P_d)$}
+        \For{$x \in F(s_1, t_1)$}
+            \For{$u,t_2 \in V$}
+                \State $ExYV(x,u,s_1,t_1,t_2) \gets 2DSP(x, F(t_1,x,t_2), u, F(t_2,u,s_1))$;
+            \EndFor
+        \EndFor
+    \EndFor
+\EndProcedure
+\Statex
+\Procedure{CalculateSingle2DSPValue}{$s_1$, $t_1$, $s_2$, $t_2$}
+\If {$s_1 = t_1 \wedge s_2 = t_2$}
+    \State \Return $s_1 = s_2$; 
+\ElsIf {$(s_1, t_1, s_2, t_2)\text{ не жёсткая четвёрка}$}
+    \State \text{вычисляем и возвращаем значение в соответствии с пунктом б теоремы \ref{main_theorem}};
+\Else
+    \State $\text{вычисляем }Q_2(s_1, t_1, s_2, t_2)\text{ по формулам \eqref{eq:Q2}}$; 
+    \State $Q_4(s_1, t_1, s_2, t_2) = ExYV(F(s_1, t_1, s_2), F(s_2, t_2, t_1), s_1, t_1, t_2)\enspace\vee\enspace$ 
+    \Statex $\hspace{4.5cm}ExYV(F(s_2, t_2, s_1), F(s_1, t_1, t_2), s_2, t_2, t_1)$; \label{line:useExYV}
+    \State \Return $Q_2(s_1, t_1, s_2, t_2) \vee Q_4(s_1, t_1, s_2, t_2)$;
+\EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\begin{proposition}
+К моменту вызова $\textsc{CalculateAllExYVValues}(d)$ все необходимые для вычислений значения предиката $2DSP$ уже посчитаны.
+\end{proposition}
+\begin{proof}
+Заметим, что $\textsc{CalculateAllExYVValues}(d)$ оперирует только значениями $2DSP(x, y, u, v)$ для таких $(x, y, u, v)$, что $x \in F(s_1, t_1)$ и $y \in F(t_1,x,t_2) \subseteq F(t_1,x)$, то есть, $l(x, y) = l(s_1, t_1) - 2 = d - 2$, а значит, $\min\{l(x, y), l(u, v)\} \leq l(x, y) = d - 2 < d$. Также заметим, что единственное место вызова $\textsc{CalculateAllExYVValues}(d)$ --- это строка \ref{line:calcExYV}, причём в качестве аргумента $d$ передаётся значение $d_{\min}$, а значит к этому моменту все значения $2DSP(x, y, u, v)$ на четвёрках $(x, y, u, v)$, таких, что $\min\{l(x, y), l(u, v)\} < d$ посчитаны, что завершает доказательство. 
+\end{proof}
+
+\begin{proposition}
+К моменту исполнения строки \ref{line:useExYV} алгоритма \ref{alg:n7} все необходимые значения $ExYV(\cdot, \cdot, \cdot, \cdot, \cdot)$ уже посчитаны.
+\end{proposition}
+\begin{proof}
+В силу предложения \ref{eql} мы знаем, что значения $l(s_1, t_1)$, $l(s_2, t_2)$ равны между собой и совпадают со значением $d_{\min}$, от которого последний раз звалась процедура $\textsc{CalculateAllExYVValues}$, значит, все значения $ExYV(\cdot, \cdot, s, t, \cdot)$ по всем $(s, t)$, таким, что $l(s, t) \leq d_{\min}$, уже посчитаны. Наконец, заметим, что в качестве третьего и четвёртого аргумента предиката $ExYV$ в строке \ref{line:useExYV} возникают пары $(s_1, t_1)$ и $(s_2, t_2)$, что завершает доказательство.
+\end{proof}
+
+Оценим сложность полученного алгоритма.
+
+\begin{proposition}
+Суммарное время работы $\textsc{CalculateAllExYVValues}$ на всех значениях $d = 0, \ldots, |V|-1$ составляет $\OO(|V|^7)$. 
+\end{proposition}
+\begin{proof}
+Заметим, что каждая пара $s_1, t_1$ будет обработана только при одном значении $d$, совпадающем с $l(s_1, t_1)$. Значит суммарное время работы данной процедуры не превосходит количества всевозможных наборов $(s_1, t_1, x, u, t_2, y, v)$, которых в точности $|V|^7$.
+\end{proof}
+
+\begin{proposition}
+Время работы одного вызова $\textsc{CalculateSingle2DSPValue}$ есть $\OO(|V|^2)$.
+\end{proposition}
+\begin{proof}
+Очевидно следует из характера новой формулы, используемой для обработки жёстких четвёрок величин в строке \ref{line:useExYV}.
+\end{proof}
+
+Оценим также потребляемую память.
+
+\begin{proposition}
+Алгоритмом \ref{alg:n7} потребляет $\OO(|V|^5)$ памяти.
+\end{proposition}
+\begin{proof}
+Помимо всех тех же массивов, которые фигурируют и в алгоритме \ref{alg:main}, добавился также пятимерный массив для сохранения значений величины $ExYV$, которые требует в точности $\OO(|V|^5)$ памяти.
+\end{proof}
+
+Оформим полученный результат в виде основной теоремы данный главы:
+\begin{theorem}
+Алгоритм \ref{alg:n7} находит значения предиката $2DSP(s_1, t_1, s_2, t_2)$ на всех набораъ 
+\end{theorem}
+
+
