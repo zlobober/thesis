@@ -15,11 +15,11 @@
 \LineComment{Вычислим значения предиката в порядке лексикографического возрастания}
 \LineComment{пары $(d_{\min}, d_{\max})$, где $d_{\min}$ это меньшее из расстояний между парами терминалов,}
 \LineComment{а $d_{\max}$ это большее.}
-\For{$d_{\min} = 0, \ldots, |V|-1$}
-    \For{$d_{\max} = d_{\min}, \ldots, |V|-1$}
+\For{$d_{\min} \gets 0, \ldots, |V|-1$}
+    \For{$d_{\max} \gets d_{\min}, \ldots, |V|-1$}
         \For{$(s_1, t_1) \in P_{d_{\min}}$}
             \For{$(s_2, t_2) \in P_{d_{\max}}$}
-                \State $2DSP(s_1, t_1, s_2, t_2) = \textsc{CalculateSingle2DSPValue}(s_1, t_1, s_2, t_2)$;
+                \State $2DSP(s_1, t_1, s_2, t_2) \gets \textsc{CalculateSingle2DSPValue}(s_1, t_1, s_2, t_2)$;
                 \State $2DSP(s_2, t_2, s_1, t_1) \gets 2DSP(s_1, t_1, s_2, t_2)$; \Comment{по симметрии}
             \EndFor
         \EndFor

@@ -1,4 +1,4 @@
-\chapter{Оптимизация времени работы до $\Theta(|V|^7)$}
+\chapter{Оптимизация времени работы до $\OO(|V|^7)$}
 
 Из всего вышеизложенного видно, что в первую очередь следует добиться ускорения тех вычислений в алгоритме \ref{alg:main}, которые скрыты в строке \ref{line:cQ4}, так как все остальные действий в алгоритме требуют всего $\OO(|V|^6)$ времени.
 
@@ -107,14 +107,14 @@ Q_4(s_1, t_1, s_2, t_2) = A(s_1, t_1, s_2, t_2) \vee A(s_2, t_2, s_1, t_1)
             x \in F(s_1, t_1, s_2)\\ 
             u \in F(s_2, t_2, t_1) 
         }
-        }} ExYV(x, u, s_1, t_1, t_2) \\
+        }} ExYV(x, u, s_1, t_1, t_2) = ExYV(F(s_1, t_1, s_2), F(s_2, t_2, t_1), s_1, t_1, t_2)\\
     ExYV(x, u, s_1, t_1, t_2) &= \quad
         \smashoperator{\bigvee_{
         \large \substack{
             y \in F(t_1, x, t_2)\\ 
             v \in F(t_2, u, s_1) 
         }
-        }} 2DSP(x, y, u, v) \\ 
+        }} 2DSP(x, y, u, v) = 2DSP(x, F(t_1, x, t_2), u, F(t_2, u, s_1))\\ 
 \end{align}
 
 В формулах выше можно увидеть конкретное место, в котором есть потенциал для оптимизации времени работы. Действительно, оказывается, что величина $A(s_1, t_1, s_2, t_2)$ зависит от всего $\OO(|V|^2)$ значений величины $ExYV(x, u, s_1, t_1, t_2)$. Таким образом, если к моменту вычисления $A(s_1, t_1, s_2, t_2)$ каким-то образом подготовить все необходимые значения $ExYV(x, u, s_1, t_1, t_2)$, то непосредственно вычисление всех $A(s_1, t_1, s_2, t_2)$ потребует всего $\OO(|V|^6)$ операций суммарно.
@@ -126,9 +126,9 @@ Q_4(s_1, t_1, s_2, t_2) = A(s_1, t_1, s_2, t_2) \vee A(s_2, t_2, s_1, t_1)
 \begin{algorithm}
 \caption{Вычисление всех значений $2DSP(s_1, t_1, s_2, t_2)$ за $O(|V|^7)$} \label{alg:n7}
 \begin{algorithmic}[1]
-\Procedure{CalculateAll2DSPValues}{$V$, $E$}z
-\State $l \gets \text{матрица попарных расстояний между вершинами в }G$; \label{line:floyd}
-\LineComment{Разобьём пары вершин на группы в соответствии с расстояними между ними.}
+\Procedure{CalculateAll2DSPValues}{$V$, $E$}
+\State $l \gets \text{матрица попарных расстояний между вершинами в }G$;
+\LineComment{Разобьём пары вершин на группы в соответствии с расстояниями между ними.}
 \State $P_i \gets \text{пустой список для всех }i = 0, \ldots, |V|-1$;
 \For{$s,t \in V$}
     \State $\text{добавляем }(s, t)\text{ в конец списка }P_{l(s, t)}$;
@@ -136,12 +136,12 @@ Q_4(s_1, t_1, s_2, t_2) = A(s_1, t_1, s_2, t_2) \vee A(s_2, t_2, s_1, t_1)
 \LineComment{Вычислим значения предиката в порядке лексикографического возрастания}
 \LineComment{пары $(d_{\min}, d_{\max})$, где $d_{\min}$ это меньшее из расстояний между парами терминалов,}
 \LineComment{а $d_{\max}$ это большее.}
-\For{$d_{\min} = 0, \ldots, |V|-1$}
+\For{$d_{\min} \gets 0, \ldots, |V|-1$}
     \State $\textsc{CalculateAllExYVValues}(d_{\min})$; \label{line:calcExYV}
-    \For{$d_{\max} = d_{\min}, \ldots, |V|-1$}
+    \For{$d_{\max} \gets d_{\min}, \ldots, |V|-1$}
         \For{$(s_1, t_1) \in P_{d_{\min}}$}
             \For{$(s_2, t_2) \in P_{d_{\max}}$}
-                \State $2DSP(s_1, t_1, s_2, t_2) = \textsc{CalculateSingle2DSPValue}(s_1, t_1, s_2, t_2)$;
+                \State $2DSP(s_1, t_1, s_2, t_2) \gets \textsc{CalculateSingle2DSPValue}(s_1, t_1, s_2, t_2)$;
                 \State $2DSP(s_2, t_2, s_1, t_1) \gets 2DSP(s_1, t_1, s_2, t_2)$; \Comment{по симметрии}
             \EndFor
         \EndFor
@@ -174,14 +174,14 @@ Q_4(s_1, t_1, s_2, t_2) = A(s_1, t_1, s_2, t_2) \vee A(s_2, t_2, s_1, t_1)
 \end{algorithmic}
 \end{algorithm}
 
-\begin{proposition}
+\begin{proposition} \label{n7_corr1}
 К моменту вызова $\textsc{CalculateAllExYVValues}(d)$ все необходимые для вычислений значения предиката $2DSP$ уже посчитаны.
 \end{proposition}
 \begin{proof}
 Заметим, что $\textsc{CalculateAllExYVValues}(d)$ оперирует только значениями $2DSP(x, y, u, v)$ для таких $(x, y, u, v)$, что $x \in F(s_1, t_1)$ и $y \in F(t_1,x,t_2) \subseteq F(t_1,x)$, то есть, $l(x, y) = l(s_1, t_1) - 2 = d - 2$, а значит, $\min\{l(x, y), l(u, v)\} \leq l(x, y) = d - 2 < d$. Также заметим, что единственное место вызова $\textsc{CalculateAllExYVValues}(d)$ --- это строка \ref{line:calcExYV}, причём в качестве аргумента $d$ передаётся значение $d_{\min}$, а значит к этому моменту все значения $2DSP(x, y, u, v)$ на четвёрках $(x, y, u, v)$, таких, что $\min\{l(x, y), l(u, v)\} < d$ посчитаны, что завершает доказательство. 
 \end{proof}
 
-\begin{proposition}
+\begin{proposition} \label{n7_corr2}
 К моменту исполнения строки \ref{line:useExYV} алгоритма \ref{alg:n7} все необходимые значения $ExYV(\cdot, \cdot, \cdot, \cdot, \cdot)$ уже посчитаны.
 \end{proposition}
 \begin{proof}
@@ -190,14 +190,14 @@ Q_4(s_1, t_1, s_2, t_2) = A(s_1, t_1, s_2, t_2) \vee A(s_2, t_2, s_1, t_1)
 
 Оценим сложность полученного алгоритма.
 
-\begin{proposition}
+\begin{proposition} \label{n7_rt1}
 Суммарное время работы $\textsc{CalculateAllExYVValues}$ на всех значениях $d = 0, \ldots, |V|-1$ составляет $\OO(|V|^7)$. 
 \end{proposition}
 \begin{proof}
 Заметим, что каждая пара $s_1, t_1$ будет обработана только при одном значении $d$, совпадающем с $l(s_1, t_1)$. Значит суммарное время работы данной процедуры не превосходит количества всевозможных наборов $(s_1, t_1, x, u, t_2, y, v)$, которых в точности $|V|^7$.
 \end{proof}
 
-\begin{proposition}
+\begin{proposition} \label{n7_rt2}
 Время работы одного вызова $\textsc{CalculateSingle2DSPValue}$ есть $\OO(|V|^2)$.
 \end{proposition}
 \begin{proof}
@@ -206,8 +206,8 @@ Q_4(s_1, t_1, s_2, t_2) = A(s_1, t_1, s_2, t_2) \vee A(s_2, t_2, s_1, t_1)
 
 Оценим также потребляемую память.
 
-\begin{proposition}
-Алгоритмом \ref{alg:n7} потребляет $\OO(|V|^5)$ памяти.
+\begin{proposition} \label{n7_m}
+Алгоритм \ref{alg:n7} потребляет $\OO(|V|^5)$ памяти.
 \end{proposition}
 \begin{proof}
 Помимо всех тех же массивов, которые фигурируют и в алгоритме \ref{alg:main}, добавился также пятимерный массив для сохранения значений величины $ExYV$, которые требует в точности $\OO(|V|^5)$ памяти.
@@ -215,7 +215,7 @@ Q_4(s_1, t_1, s_2, t_2) = A(s_1, t_1, s_2, t_2) \vee A(s_2, t_2, s_1, t_1)
 
 Оформим полученный результат в виде основной теоремы данный главы:
 \begin{theorem}
-Алгоритм \ref{alg:n7} находит значения предиката $2DSP(s_1, t_1, s_2, t_2)$ на всех набораъ 
+Алгоритм \ref{alg:n7} находит значения предиката $2DSP(s_1, t_1, s_2, t_2)$ на всех наборах $(s_1, t_1, s_2, t_2)$, используя $O(|V|^7)$ времени и $O(|V|^5)$ памяти. 
 \end{theorem}
 
 
