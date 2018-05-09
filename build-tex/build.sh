@@ -1,21 +1,30 @@
+#!/bin/bash
+
+shopt -s extglob
+
 # Pdflatex
-PDFLATEX="pdflatex -interaction=nonstopmode -shell-escape -file-line-error -output-directory=`pwd`"
+export TEXINPUTS=".:`pwd`:"
+PDFLATEX="pdflatex -shell-escape -file-line-error -output-directory=`pwd`"
 GREP='grep ".*:[0-9]*:.*"' # показывает на выходе только ошибки
 
 # Файлы/Папки
 PDF_NAME='thesis.pdf'
 TEX='../tex'
-IMG='inc/img'
+IMG='img'
 MAINTEX="0-main"
+
+pushd $TEX/$IMG
+rm !(*.mp);
+mpost *.mp || exit 1
+mpost *.mp || exit 1
+popd
+
+mv $TEX/$IMG/!(*.mp) .
 
 pushd $TEX
 
-# Конвертация eps
-find $IMG/ -type f -name "*.eps" -exec epstopdf {} ";" ;
-find $IMG -type f -name "*.eps" -exec rm -f {} \;
-
 # Сборка latex
-$PDFLATEX $MAINTEX > /dev/null
+$PDFLATEX $MAINTEX
 popd
 BIBOUTPUT=$(BSTINPUTS=$TEX BIBINPUTS=$TEX bibtex $MAINTEX)
 pushd $TEX
