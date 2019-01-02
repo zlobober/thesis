@@ -9,7 +9,7 @@ GREP='grep ".*:[0-9]*:.*"' # показывает на выходе только
 
 # Файлы/Папки
 PDF_NAME='thesis.pdf'
-TEX='../tex'
+TEX='../tex-ru-thesis'
 IMG='img'
 MAINTEX="0-main"
 
