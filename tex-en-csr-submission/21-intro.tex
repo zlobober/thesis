@@ -1,0 +1,33 @@
+\section{Introduction}
+
+Consider a problem of finding $k$ disjoint shortest paths that is formulated as follows:
+
+\emph{Given a graph $G = (V, E)$ (either directed or undirected, either weighted or unweighted, i.e. unit-length) and $k$ terminal pairs $(s_i, t_i)$ ($s_i, t_i \in V$, $1 \leq i \leq k$), find out if there exist a $k$-tuple of paths $P_i$ such that: 1) path $P_i$ goes from $s_i$ to $t_i$ 2) each $P_i$ is one of the shortest paths from $s_i$ to $t_i$ and 3) paths are pairwise disjoint (either vertex-disjoint or edge-disjoint).}
+
+By choosing any option in each of the three possible places in the definition above, we get 8 possible variants of the $DSP$ problem. For example, we may consider the undirected weighted vertex-disjoint version of $k$DSP.
+
+In \cite{ET} it is proven that, having $k$ as a part of the problem input, $k$DSP immediately becomes an NP-complete problem even for a planar unit-length case irrespective of whether graph is directed and whether we choose vertex-disjoint paths or edge-disjoint paths. In this article we will concentrate on a case when $k$ is fixed and equal to $2$, investigating a polynomial-time algorithm solving it. 
+
+For weighted undirected vertex-disjoint case, Eilam-Tzoreff provided a polynomial time algorithm based on a dynamic programming approach. He also provided a reduction from edge-disjoint case to vertex-disjoint case that requires an additional computation with running time that is linear by the graph size. The drawback of the algorithm of Eilam-Tzoreff is its extreme running time; author provides an upper bound of  $\OO(|V|^8)$ that motivates us to investigate a natural question --- is it possible to solve the problem faster?
+
+In this article we obtain the algorithm with running time of $\OO(|V|^6)$ for the unit-length case of $2DSP$ and the algorithm with running time of $\OO(|V|^7)$ for the weighted case of $2DSP$ (in both cases we consider the vertex-disjoint undirected formulation). Our algorithms are obtained as the modifications of Eilam-Tzoreff algorithm using two improvements. First one is standard for the dynamic programming approach and consists of choosing the appropriate computation order that allows the division of our problem into two independent smaller ones with better running time. The second one is novel and works as follows: we treat the computationally hardest routine of the algorithm as taking the value of a bilinear form at some pair of vectors, and then carefully analyze the triples (form, 1st argument, 2nd argument) that are to be proceeded. It turns out that by performing a preliminary multiplication of form matrices onto the 1st arguments of the form, we may reduce the running time complexity even further.
+
+As a proof of concept, the obtained algorithms were implemented in C++. With their use, the correctness of the algorithm was checked for all possible unweighted graphs of small size ($|V| \leq 8$) and for a significant number of connected graphs of larger size ($|V| = 10, 20, 30$). 
+
+% This paper is structured in the following manner:
+
+% Glava 1 soderzhit vse neobxodimy'e opredeleniya iz stat`i \cite{ET}, a takzhe osnovnoj rezul`tat stat`i, na kotorom osnovy'vaetsya b\'{o}l`shaya chast` dannoj raboty'. 
+
+% Glava 2 soderzhit ryad vspomogatel`ny'x utverzhdenij, neobxodimy'x dlya postroeniya model`nogo algoritma dlya nevzveshennogo sluchaya, s kotory'm i budet vestis` dal`nejshaya rabota po optimizacii.
+
+% Glava 3 soderzhit model`ny'j algoritm dlya nevzveshennogo sluchaya s dokazatel`stvom nizhnej i verxnej ocenki na vremya raboty' algoritma.
+
+% Glava 4 soderzhit nablyudeniya, neobxodimy'e, dlya umen`sheniya vremeni raboty' algoritma dlya nevzveshennj zadachi v xudshem sluchae do $\OO(|V|^7)$.
+
+% Glava 5 soderzhit nablyudenie, neobxodimy'e, dlya umen`sheniya vremeni raboty' algoritma dlya nevzveshennoj zadachi v xudshem sluchae do $\OO(|V|^6)$.
+
+% Glava 6 soderzhit prakticheskie rezul`taty', poluchenny'e vo vremya realizacii model`nogo algoritma dlya nevzveshennoj zadachi i ego optimizirovanny'x versij v vide programmy' na yazy'ke programmirovaniya C++.
+
+% Glava 7 soderzhit ryad dopolnitel`ny'x nablyudenij, obobshhayushhix poluchenny'j algoritm na sluchaj vzveshenny'x grafov cenoj dopolnitel`nogo mnozhitelya v $|V|$ vo vremeni raboty', a takzhe potencial`no pomogayushhix poluchit` eshhyo bolee e`ffektivnoe reshenie. 
+
+Source code of the implemented algorithms and the LaTeX sources of this article (both in English and in Russian) are available at \url{https://github.com/zlobober/thesis}.

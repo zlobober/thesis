@@ -1,0 +1,18 @@
+\title{Faster 2 Disoint Shortest Paths Algorithm}
+
+\author{Maxim Akhmedov\inst{1, 3}\orcidID{0000-0002-7947-1416} \and \\
+Maxim Babenko\inst{2, 3}\orcidID{0000-0003-2877-9725}}
+\authorrunning{M. Akhmedov and M. Babenko}
+
+\institute{Moscow State University, Department of Mathematical Logic and Algorithms, Moscow, Russia \\ \email{akhmedov@lpcs.math.msu.su} \and
+Higher School of Economics, Faculty of Computer Science, Moscow, Russia \\ \email{mbabenko@hse.ru} \and
+Yandex LLC, Moscow, Russia}
+
+\maketitle
+
+\begin{abstract}
+In 1998 Tali Eilam-Tzoreff formulated the $k$DSP problem: given the graph $G$ and $k$ pairs of terminal vertices $(s_1, t_1), (s_2, t_2), \ldots, (s_k, t_k)$, does there exist a $k$-tuple of pairwise disjoint shortest paths between these $k$ pairs of terminals? The most interesting case from the algorithmic point of view is a vertex-disjoint case with $k=2$. For this setting Eilam-Tzoreff provided the algorithm running in $\OO(|V|^8)$ for directed or undirected graphs and for weighted or unit-length edges using the original dynamic programming approach. In this paper we examine the DP relations arising in this problem and reduce the time complexity to $\OO(|V|^6)$ for the unit-length case and to $\OO(|V|^7)$ for the weighed case.
+
+\keywords{Dynamic programming  \and Shortest paths \and Graph theory.}
+\end{abstract}
+

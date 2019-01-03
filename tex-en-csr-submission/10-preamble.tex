@@ -1,0 +1,67 @@
+\sloppy
+
+\usepackage{float}
+\usepackage{graphicx}   % Paket dlya vklyucheniya risunkov
+\DeclareGraphicsExtensions{.jpg,.pdf,.png}
+\DeclareGraphicsRule{.1}{mps}{*}{}
+\DeclareGraphicsRule{.2}{mps}{*}{}
+
+\newcommand{\OO}{\mathcal{O}}
+\newcommand{\sm}{\setminus}
+
+% Proizvol`naya numeraciya spiskov.
+\usepackage{enumerate}
+
+\setcounter{tocdepth}{2} %Podrobnost` oglavleniya
+%4 e`to chapter, section, subsection, subsubsection i paragraph
+%3 e`to chapter, section, subsection i subsubsection
+%2 e`to chapter, section, i subsection
+%1 e`to chapter i section
+%0 e`to chapter.
+
+\usepackage{amsmath,amssymb,mathtools}
+%\usepackage{amsthm}
+%\theoremstyle{definition}
+%\newtheorem{theorem}{Theorem}
+%\newtheorem{proposition}[theorem]{Proposition}
+%\newtheorem{corollary}[theorem]{Corollary}
+%\newtheorem{lemma}[theorem]{Lemma}
+%\newtheorem{definition}[theorem]{Definition}
+%\newtheorem{example}[theorem]{Example}
+%\newtheorem{remark}[theorem]{Remark}
+
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+
+\makeatletter
+\def\Let@{\def\\{\notag\math@cr}}
+\makeatother
+
+\makeatletter
+\algnewcommand{\LineComment}[1]{\Statex \hskip\ALG@thistlm \(\triangleright\) #1}
+\makeatother
+
+\renewcommand{\listalgorithmname}{Spisok algoritmov}
+\floatname{algorithm}{Algoritm}
+
+\usepackage{caption}% http://ctan.org/pkg/caption
+\captionsetup[ruled]{labelsep=period}
+\makeatletter
+\@addtoreset{algorithm}{chapter}% algorithm counter resets every chapter
+\makeatother
+\renewcommand{\thealgorithm}{\thechapter.\arabic{algorithm}}% Algorithm # is <chapter>.<algorithm>
+
+\def\bbljan{yanv. }
+\def\bblfeb{fev.}
+\def\bblmar{mar.}
+\def\bblapr{apr.}
+\def\bblmay{maya}
+\def\bbljun{iyun.}
+\def\bbljul{iyul.}
+\def\bblaug{avg.}
+\def\bblsep{sen.}
+\def\bbloct{okt.}
+\def\bblnov{noya.}
+\def\bbldec{dek.}
+
+\usepackage{hyperref}
