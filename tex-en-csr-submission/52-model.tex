@@ -1,0 +1,107 @@
+\section{Model`ny'j algoritm}
+
+Ustanovlenny'x faktov xvataet, chtoby' oformit` algoritm vy'chisleniya vsex znachenij predikata $2DSP$ v vide psevdokoda (algoritm \ref{alg:main}). 
+
+\begin{algorithm}
+\caption{Vy'chislenie vsex znachenij $2DSP(s_1, t_1, s_2, t_2)$ za $O(|V|^8)$} \label{alg:main}
+\begin{algorithmic}[1]
+\Procedure{CalculateAll2DSPValues}{$V$, $E$}
+\State $l \gets \text{matricza poparny'x rasstoyanij mezhdu vershinami v }G$; \label{line:floyd}
+\LineComment{Razob`yom pary' vershin na gruppy' v sootvetstvii s rasstoyanimi mezhdu nimi.}
+\State $P_i \gets \text{pustoj spisok dlya vsex }i = 0, \ldots, |V|-1$;
+\For{$s,t \in V$}
+    \State $\text{dobavlyaem }(s, t)\text{ v konecz spiska }P_{l(s, t)}$;
+\EndFor
+\LineComment{Vy'chislim znacheniya predikata v poryadke leksikograficheskogo vozrastaniya}
+\LineComment{pary' $(d_{\min}, d_{\max})$, gde $d_{\min}$ e`to men`shee iz rasstoyanij mezhdu parami terminalov,}
+\LineComment{a $d_{\max}$ e`to bol`shee.}
+\For{$d_{\min} \gets 0, \ldots, |V|-1$}
+    \For{$d_{\max} \gets d_{\min}, \ldots, |V|-1$}
+        \For{$(s_1, t_1) \in P_{d_{\min}}$}
+            \For{$(s_2, t_2) \in P_{d_{\max}}$}
+                \State $2DSP(s_1, t_1, s_2, t_2) \gets \textsc{CalculateSingle2DSPValue}(s_1, t_1, s_2, t_2)$;
+                \State $2DSP(s_2, t_2, s_1, t_1) \gets 2DSP(s_1, t_1, s_2, t_2)$; \Comment{po simmetrii}
+            \EndFor
+        \EndFor
+    \EndFor
+\EndFor
+\EndProcedure
+\Statex
+\Procedure{CalculateSingle2DSPValue}{$s_1$, $t_1$, $s_2$, $t_2$}
+\If {$s_1 = t_1 \wedge s_2 = t_2$}
+    \State \Return $s_1 = s_2$; \label{line:a}
+\ElsIf {$(s_1, t_1, s_2, t_2)\text{ ne zhyostkaya chetvyorka}$}
+    \State \text{vy'chislyaem i vozvrashhaem znachenie v sootvetstvii s punktom b teoremy' \ref{main_theorem}}; \label{line:b}
+\Else
+    \State $\text{vy'chislyaem }Q_2(s_1, t_1, s_2, t_2)\text{ po formulam \eqref{eq:Q2}}$; \label{line:cQ2}
+    \State $\text{vy'chislyaem }Q_4(s_1, t_1, s_2, t_2)\text{ po formulam \eqref{eq:Q4}}$; \label{line:cQ4}
+    \State \Return $Q_2(s_1, t_1, s_2, t_2) \vee Q_4(s_1, t_1, s_2, t_2)$;
+\EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+Prokommentiruem vremennuyu slozhnost` vsex sostavny'x chastej algoritma.
+
+\begin{proposition}
+Postroenie matricy' kratchajshix rasstoyanij v stroke \ref{line:floyd} algoritma \ref{alg:main} mozhno proizvesti za vremya $\OO(|V|^3)$.
+\end{proposition}
+\begin{proof}
+Dostatochno vospol`zovat`sya algoritmom Flojda-Uorshella (\cite{Floyd}, \cite{CLRS}).
+\end{proof}
+
+\begin{proposition}
+Procedura \textsc{CalculateSingle2DSPValue} rabotaet za $\OO(1)$, $\OO(|V|)$ ili $\OO(|V|^4)$ v zavisimosti ot togo, kakoj sluchaj iz teoremy' \ref{main_theorem} realizuetsya.
+\end{proposition}
+\begin{proof}
+Legko videt`, chto stroka \ref{line:a} sostoit iz edinstvennoj instrukcii i sootvetstvuet sluchayu, trebuyushhemu konstantnoe kolichestvo operacij, stroka \ref{line:b} sootvetstvuet sluchayu, v kotorom vy'chislenie zavisit ot $\OO(|V|)$ chetvyorok (sm. punkt b teoremy' \ref{main_theorem}). 
+
+Stroka \ref{line:cQ2} sootvetstvuet gruppe tex chetvyorok vershin, ot kotory'x zavisit chetvyorka $(s_1, t_1, s_2, t_2)$, i kotory'e otlichayutsya ot nashej chetvyorki v dvux poziciyax, stalo by't`, vy'chislenie $Q_2(s_1, t_1, s_2, t_2)$ trebuet ne bolee $\OO(|V|^2)$ operacij v xudshem sluchae.
+
+Nakonecz, stroka \ref{line:cQ4} sootvetstvuet gruppe tex chetvyorok vershin, kotory'e otlichayutsya ot chetvyorki $(s_1, t_1, s_2, t_2)$ po kazhdoj komponente, a znachit, vy'chislenie $Q_4(s_1, t_1, s_2, t_2)$ trebuet ne bolee $\OO(|V|^4)$ operacij v xudshem sluchae.
+\end{proof}
+
+Takim obrazom, my' poluchili verxnyuyu ocenku na vremya raboty' algoritma \ref{alg:main}, kotoruyu mozhno sformulirovat` v vide teoremy':
+
+\begin{theorem}
+Vremya raboty' algoritma \ref{alg:main} est` $\OO(|V|^8)$.
+\end{theorem}
+\begin{proof}
+Osnovnoe vremya zanimayut vy'zovy' \textsc{CalculateSingle2DSPValue}, kotory'x budet proizvedeno rovno $|V|^4$, i kazhdy'j iz kotory'x rabotaet za vremya $O(|V|^4)$.
+\end{proof}
+
+Vidno, chto samy'm uzkim mestom v programme yavlyaetsya vy'chislenie $Q_4(s_1, t_1, s_2, t_2)$. Pokazhem takzhe, chto v xudshem sluchae algoritm \ref{alg:main} rabotaet za $\Theta(|V|^8)$. Dlya e`togo dostatochno pred``yavit` semejstvo grafov skol` ugodno bol`shogo razmera, dlya kotory'x vremya raboty' algoritma \ref{alg:main} est` $\Theta(|V|^8)$.
+
+\begin{theorem}
+Postroim graf $G_k = (V_k, E_k)$, gde 
+
+\begin{align}
+V_k &= \bigsqcup\limits_{i = 0,\ldots,7} S_i \sqcup \{c\} \\
+E_k &= \bigsqcup\limits_{i = 0,\ldots,7} S_i \times S_{(i+1) \bmod 8} \quad\sqcup\quad \bigsqcup\limits_{i=1,3,5,7} S_i \times \{c\} \\
+|S_i| &= k.
+\end{align}
+
+\begin{figure}[H]
+\caption{Graf, dlya kotorogo chast` $Q_4$ yavlyaetsya opredelyayushhej pri vy'chislenii $2DSP(s_1, t_1, s_2, t_2)$}
+\centering
+\includegraphics[width=0.5\textwidth]{pic.1}
+\end{figure}
+
+Zametim, chto v dannom grafe $|V_k| = 12k + 1$ i $|E_k| = 12k^2 + 4k$. Togda vremya raboty' algoritma \ref{alg:main} na grafe $G_k$ sostavit $\Theta(k^8) = \Theta(|V|^8)$.
+
+\end{theorem}
+\begin{proof}
+Predpolozhim, $s_1 \in S_0$, $s_2 \in S_2$, $t_1 \in S_4$, $t_2 \in S_6$. Togda $l(s_1, t_1) = l(s_2, t_2) = 4$, $l(s_1, s_2) = l(s_2, t_1) = l(t_1, t_2) = l(t_2, s_1) = 2$, to est`, $s_1, t_1 \in L(s_2, t_2)$ i $s_2, t_2 \in L(s_1, t_1)$, a znachit, $(s_1, t_1, s_2, t_2)$ --- zhyostkaya chetvyorka vershin.
+
+Zametim takzhe, chto esli $x \in S_1$, $u \in S_3$, $y \in S_5$, $v \in S_7$, to $(s_1, t_1, s_2, t_2) \succ (x, y, u, v)$. Dejstvitel`no, verny' sootnosheniya $x \in F(s_1, s_2)$, $u \in F(s_2, t_1)$, $y \in F(t_1, t_2)$, $v \in F(t_2, s_1)$, i pri e`tom $l(x, y) = 2 = l(s_1, t_1) - 2$ i $l(u, v) = 2 = l(s_2, t_2) - 2$, znachit, $(x, y, u, v)$ popadaet v pervoe vy'razhenie formuly' \ref{eq:Q4}.
+
+Nakonecz zametim, chto opisanny'x naborov $(s_1, t_1, s_2, t_2, x, y, u, v)$ v tochnosti $k^8 = \Theta(|V|^8)$, a znachit, summarnoe vremya, zatrachennoe na ispolnenie stroki \ref{line:cQ4} algoritma \ref{alg:main}, sostavit $\Theta(|V|^8)$.
+\end{proof}
+
+Nakonecz, ocenim pamyat`, potreblyaemuyu algoritmom \ref{alg:main}
+\begin{theorem}
+Algoritm \ref{alg:main} potreblyaet $\OO(|V|^4)$ pamyati.
+\end{theorem}
+\begin{proof}
+Dejstvitel`no, vsyo potreblenie pamyati sosredotocheno v soxranenii grafa i matricy' kratchajshix putej, na kotory'e nuzhno $\OO(|V|^2)$, pamyati, a takzhe chety'ryoxmernogo massiva logicheskix znachenij predikata $2DSP$, na kotory'j nuzhno $\OO(|V|^4)$ pamyati.
+\end{proof}

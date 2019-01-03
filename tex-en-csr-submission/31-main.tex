@@ -1,0 +1,112 @@
+\section{Definitions and the DP formula}
+
+Let us introduce all necessary definitions. From now on, let's consider $G = (V, E)$ to be undirected graph without loops, $w : E \rightarrow \mathbb{R}_{>0}$ to be the edge weight function. 
+
+\begin{definition}
+Length of a simple path (a path without repeated vertices) formed by the edges $e_1, e_2, \ldots, e_k$ is defined to be equal to $w(e_1) + w(e_2) + \ldots + w(e_k)$.
+\end{definition}
+
+\begin{definition} 
+Let $x, y \in V$ be two vertices belonging to the same connected component. Define $l(x, y)$ to be the length of the shortest path between $x$ and $y$. For $x$ and $y$ belonging to the different connected components let $l(x, y)$ be equal to $+\infty$.
+\end{definition}
+
+In particular, for any $x \in V$ it is true that $l(x, x) = 0$.
+
+\begin{definition} \label{is_between}
+Fix $x, y \in V$. Define $L(x, y) \subseteq V$ to be the set of all $v \in V$ belonging to at least one shortest path between $x$ and $y$.
+\end{definition}
+
+It is easy to see that $v \in L(x, y) \Leftrightarrow l(x, v) + l(v, y) = l(x, y)$. Also, for $x$ and $y$ from different connected components, $L(x, y) = \varnothing$ and for any $v \in V$ $L(v, v) = \{v\}$.
+
+We will also introduce a few special definitions that will significantly simplify the DP formulae.
+
+\begin{definition}
+Fix $x, y \in V$. Let $F(x, y) = \{v \in L(x, y) \mid (x, v) \in E\}$, i.e. $F(x, y)$ is formed by all of the vertices that are the successors of $x$ in at least one shortest path from $x$ to $y$. 
+\end{definition}
+
+For the sake of convenience, we will also introduce a 3-argument variant of function $F$: 
+
+\begin{definition}
+Fix $x, y, z \in V$. Let $F(x, y, z) = F(x, y) \cap F(x, z)$, i.e. $F(x, y, z)$ is formed by all of the vertices that are the successors of $x$ in at least one shortest path from $x$ to $y$ and at least one shortest path from $x$ to $z$.
+\end{definition}
+
+\begin{definition}
+Fix $s_1, t_1, s_2, t_2 \in V$. Define predicate $2DSP(s_1, t_1, s_2, t_2)$ be equal to $1$ if there exist two vertex-disjoint shortest paths $P_1$ and $P_2$ from $s_1$ to $t_1$ and $P_2$ from $s_2$ respectively, and $0$ otherwise.
+\end{definition}
+
+\begin{definition}
+The quadruple $(s_1, t_1, s_2, t_2) \in V^4$ is called \textit{rigid} iff $s_1, t_1 \in L(s_2, t_2)$ and $s_2, t_2 \in L(s_1, t_1)$.
+\end{definition}
+
+Finally, we will introduce the following notation simplifying the formulae including predicates. We allow some of the arguments of $2DSP$ to be vertex sets instead of single vertices. In this case, we consider the resulting expression to be the logical disjunction of $2DSP$ over all quadruples, in which each component belongs to the corresponding argument set. For example,
+
+\begin{equation}
+2DSP(F(s_1, t_1), t_1, s_2, t_2) = \bigvee\limits_{x \in F(s_1, t_1)} 2DSP(x, t_1, s_2, t_2).
+\end{equation}
+
+Let us formulate the main result of \cite{ET} about the $2DSP$ problem:
+
+\begin{theorem} \label{main_theorem}
+For any $s_1, t_1, s_2, t_2 \in V$ one of the following equations is held:
+\begin{enumerate} 
+\item If $s_1 = t_1$, $s_2 = t_2$, then $2DSP(s_1, t_1, s_2, t_2)$ is $1$ if $s_1 \neq s_2$, or $0$ otherwise.
+\item Otherwise, if $(s_1, t_1, s_2, t_2)$ is not rigid, let us consider a vertex of quadruple for which the rigidness condition does not hold. Without loss of generality, suppose that $s_1$ is that vertex, i.e. $s_1 \notin L(s_2, t_2)$ and $s_1 \neq t_1$. In this case $2DSP(s_1, t_1, s_2, t_2) = 2DSP(F(s_1, t_1), s_2, t_2)$.
+\item Otherwise, define $C = L(s_1, s_2) \cup L(s_2, t_1) \cup L(t_1, t_2) \cup L(t_2, s_1)$. In this case $2DSP(s_1, t_1, s_2, t_2) = Q_2(s_1, t_1, s_2, t_2) \vee Q_4(s_1, t_1, s_2, t_2)$ where $Q_2$ and $Q_4$ are defined as follows:
+
+\begin{align}
+Q_2(s_1, t_1, s_2, t_2) =\hspace{-1cm}\\
+    2DSP(&& s_1              ,&& F(t_1, s_1, s_2) ,&& s_2              ,&& F(t_2, s_2, s_1) &)~\vee \\
+    2DSP(&& F(s_1, t_1, s_2) ,&& t_1              ,&& s_2              ,&& F(t_2, s_2, t_1) &)~\vee \\
+    2DSP(&& s_1              ,&& F(t_1, s_1, t_2) ,&& F(s_2, t_2, s_1) ,&& t_2              &)~\vee \\
+    2DSP(&& F(s_1, t_1, t_2) ,&& t_1              ,&& F(s_2, t_2, t_1) ,&& t_2              &)~\vee \\[0.4cm]
+    %
+    2DSP(&& F(s_1, t_1) \sm C,&& t_1              ,&& F(s_2, t_2) \sm C,&& t_2              &)~\vee \\ 
+    2DSP(&& F(s_1, t_1) \sm C,&& t_1              ,&& s_2              ,&& F(t_2, s_2) \sm C&)~\vee \\ 
+    2DSP(&& s_1              ,&& F(t_1, s_1) \sm C,&& F(s_2, t_2) \sm C,&& t_2              &)~\vee \\ 
+    2DSP(&& s_1              ,&& F(t_1, s_1) \sm C,&& s_2              ,&& F(t_2, s_2) \sm C&)~\vee \\[0.4cm]
+    %
+    2DSP(&& s_1              ,&& F(t_1, s_1, s_2) ,&& s_2              ,&& F(t_2, s_2) \sm C&)~\vee \\
+    2DSP(&& s_1              ,&& F(t_1, s_1, t_2) ,&& F(s_2, t_2) \sm C,&& t_2              &)~\vee \\
+    2DSP(&& F(t_1, s_1, s_2) ,&& t_1              ,&& s_2              ,&& F(t_2, s_2) \sm C&)~\vee \\
+    2DSP(&& F(t_1, s_1, t_2) ,&& t_1              ,&& F(s_2, t_2) \sm C,&& t_2              &)~\vee \\
+    2DSP(&& s_1              ,&& F(t_1, s_1) \sm C,&& s_2              ,&& F(t_2, s_2, s_1) &)~\vee \\
+    2DSP(&& F(s_1, t_1) \sm C,&& t_1              ,&& s_2              ,&& F(t_2, s_2, t_1) &)~\vee \\
+    2DSP(&& s_1              ,&& F(t_1, s_1) \sm C,&& F(s_2, t_2, s_1) ,&& t_2              &)~\vee \\
+    2DSP(&& F(s_1, t_1) \sm C,&& t_1              ,&& F(s_2, t_2, t_1) ,&& t_2              &) \label{eq:Q2}
+\end{align}
+\begin{align}
+    Q_4(s_1, t_1, s_2, t_2) = \quad
+        \smashoperator{\bigvee_{
+        \large \substack{
+            x \in F(s_1, s_2)\\ 
+            y \in F(t_1, t_2)\\ 
+            u \in F(s_2, t_1)\\ 
+            v \in F(t_2, s_1)\\ 
+            l(s_1, x) + l(x, y) + l(y, t_1) = l(s_1, t_1)\\ 
+            l(s_1, u) + l(u, v) + l(v, t_2) = l(s_2, t_2)
+        }
+        }} 2DSP(x, y, u, v)
+        \quad\quad\vee\quad\quad
+        \smashoperator{\bigvee_{
+        \large \substack{
+            x \in F(s_1, t_2)\\ 
+            y \in F(t_1, s_2)\\ 
+            u \in F(s_2, s_1)\\ 
+            v \in F(t_2, t_1)\\ 
+            l(s_1, x) + l(x, y) + l(y, t_1) = l(s_1, t_1)\\ 
+            l(s_2, u) + l(u, v) + l(v, t_2) = l(s_2, t_2)
+        }
+        }} 2DSP(x, y, u, v) \label{eq:Q4} \\
+\end{align}
+\end{enumerate}
+\end{theorem}
+
+Statement above (especially the formulae \eqref{eq:Q2} and \eqref{eq:Q4}) may look a bit shocking for an unprepared reader, so we try to explain them in more natural-ish manner in Appendix 1. It is highly recommended to get through the explanation, although it is not required to understand the rest of the article. We will still formulate a few important results proven in the Appendix 1 here.
+
+\begin{proposition} \label{eql}
+For a rigid quadruple $(s_1, t_1, s_2, t_2)$ it is true that $l(s_1, t_1) = l(s_2, t_2)$.
+\end{proposition}
+
+\begin{theorem} 
+Algorithm \ref{alg:n8} calculates the predicate $2DSP(s_1, t_1, s_2, t_2)$ over all quadruples $(s_1, t_1, s_2, t_2)$ in running time of $\OO(|V|^8)$ using $\Theta(|V|^4)$ of memory. 
+\end{theorem}

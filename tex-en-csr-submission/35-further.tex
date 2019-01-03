@@ -1,0 +1,9 @@
+\section{Generalisation for the weighted graph case}
+
+The algorithm \ref{alg:n7} may be easily generalized for weighted graph $G = (V, E)$ with a positive edge weight function $w : E \rightarrow \mathbb{R}_+$ by exploiting the fact that the algorithm only compares the distances between the pairs of vertices and performs arithmetic actions on them, in contrast with the algorithm \ref{alg:n6}, in which the distances become the parameter of a bilinear form.
+
+The complete pseudocode of the algorithm for the weighted case is provided in the Appendix section of the article. We can formulate the result of this section as the following theorem:
+
+\begin{theorem}
+Algorithm \ref{alg:n7w} finds the values of a predicate $2DSP(s_1, t_1, s_2, t_2)$ for the graph $G = (V, E)$ with a positive edge weight function $w$ for all quadruples of $(s_1, t_1, s_2, t_2)$ in $\OO(|V|^7)$ running time and $\OO(|V|^5)$ memory. 
+\end{theorem}
