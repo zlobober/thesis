@@ -1,23 +1,22 @@
 \section{Reducing running time to $\OO(|V|^7)$}
 
-In the following two sections we consider edges to have unit length, i.e. graph is unweighted.
+In the following two sections we assume edges to have unit length, i.e. the graph to be unweighted.
 
-We will start from optimizing the DP transitions collected in the term of \eqref{eq:Q4} as all the remaining transitions require $\OO(|V|^6)$ running time. Let us rewrite the formula for $Q_4(s_1, t_1, s_2, t_2)$. Denote the first and the second expression in \eqref{eq:Q4} as $A_4(s_1, t_1, s_2, t_2)$ and $B_4(s_1, t_1, s_2, t_2)$:
-
-\begin{equation} \label{eq:A} 
+We start by optimizing the DP transitions given by \eqref{eq:Q4} as all the remaining transitions require $\OO(|V|^6)$ time. Denote the first and the second expression in \eqref{eq:Q4} by $A_4(s_1, t_1, s_2, t_2)$ and $B_4(s_1, t_1, s_2, t_2)$:
+\begin{align} \label{eq:A}
     A(s_1, t_1, s_2, t_2) = \quad
         \smashoperator{\bigvee_{
         \large \substack{
-            x \in F(s_1, s_2)\\ 
-            y \in F(t_1, t_2)\\ 
-            u \in F(s_2, t_1)\\ 
-            v \in F(t_2, s_1)\\ 
+            %x \in F(s_1, s_2)\\ 
+            %y \in F(t_1, t_2)\\ 
+            %u \in F(s_2, t_1)\\ 
+            %v \in F(t_2, s_1)\\ 
             l(x, y) + 2 = l(s_1, t_1)\\ 
             l(u, v) + 2 = l(s_2, t_2)
         }
-        }} 2DSP(x, y, u, v)
-\end{equation}
-\begin{equation} \label{eq:B}
+        }} 2DSP(x, y, u, v) \\
+\end{align}
+\begin{align} \label{eq:B}
    B(s_1, t_1, s_2, t_2) = \quad
         \smashoperator{\bigvee_{
         \large \substack{
@@ -28,25 +27,25 @@ We will start from optimizing the DP transitions collected in the term of \eqref
             l(x, y) + 2 = l(s_1, t_1)\\ 
             l(u, v) + 2 = l(s_2, t_2)
         }
-        }} 2DSP(x, y, u, v)
-\end{equation}
+        }} 2DSP(x, y, u, v) \\
+\end{align}
 \begin{proposition}
 The following equation holds:
 \begin{equation}
-    B(s_1, t_1, s_2, t_2) = A(s_2, t_2, s_1, t_1)
+    B(s_1, t_1, s_2, t_2) = A(s_2, t_2, s_1, t_1).
 \end{equation}
 \end{proposition}
 \begin{proof}
-The equation immediately follows from the existence of bijection between quadruples $(x, y, u, v)$ s.t. $x \in F(s_2, s_1)$, $y \in F(t_2, t_1)$, $u \in F(s_1, t_2)$, $v \in F(t_1, s_2)$, $l(x, y) + 2 = l(s_2, t_2)$, $l(u, v) + 2 = l(s_1, t_1)$ (that form the disjunction domain in the expression for $A(s_2, t_2, s_1, t_1)$) and quadruples $(x', y', u', v')$ s.t. $x' \in F(s_1, t_2)$, $y' \in F(t_1, s_2)$, $u' \in F(s_2, s_1)$, $v' \in F(t_2, t_1)$, $l(x', y') + 2 = l(s_1, t_1)$, $l(u', v') + 2 = l(s_2, t_2)$. The sought bijection is defined by the formulae: $x' = u$, $y' = v$, $u' = x$, $v' = y$.
+The equation immediately follows from the existence of a bijection between quadruples $(x, y, u, v)$ s.t. $x \in F(s_2, s_1)$, $y \in F(t_2, t_1)$, $u \in F(s_1, t_2)$, $v \in F(t_1, s_2)$, $l(x, y) + 2 = l(s_2, t_2)$, $l(u, v) + 2 = l(s_1, t_1)$ (that form the disjunction domain in the expression for $A(s_2, t_2, s_1, t_1)$) and quadruples $(x', y', u', v')$ s.t. $x' \in F(s_1, t_2)$, $y' \in F(t_1, s_2)$, $u' \in F(s_2, s_1)$, $v' \in F(t_2, t_1)$, $l(x', y') + 2 = l(s_1, t_1)$, $l(u', v') + 2 = l(s_2, t_2)$. The sought bijection is defined by $x' = u$, $y' = v$, $u' = x$, $v' = y$.
 \end{proof}
 
-Thus, $Q_4(s_1, t_1, s_2, t_2)$ may be expressed using only the predicate $A$:
+Thus, $Q_4(s_1, t_1, s_2, t_2)$ may be expressed using just predicate $A$:
 
 \begin{equation} \label{eq:Q4A}
 Q_4(s_1, t_1, s_2, t_2) = A(s_1, t_1, s_2, t_2) \vee A(s_2, t_2, s_1, t_1)
 \end{equation}
 
-Now let us rewrite \eqref{eq:A} in a more convenient manner. We will rewrite the conditions on $(x, y, u, v)$ in \eqref{eq:A} in the equivalent form:
+We rewrite the conditions on $(x, y, u, v)$ in \eqref{eq:A} in the equivalent form:
 
 \begin{proposition}
 
@@ -77,12 +76,12 @@ Now let us rewrite \eqref{eq:A} in a more convenient manner. We will rewrite the
 \end{proposition}
 \begin{proof}
 
-First, note that $l(x, y) + 2 = l(s_1, t_1)$ and $l(u, v) + 2 = l(s_2, t_2)$ immediately implies that $x, y \in L(s_1, t_1)$ and $u, v \in L(s_2, t_2)$, so we may replace $F(s_1, s_2)$ with $F(s_1, t_1, s_2)$ as a domain for $x$, and perform the similar action for $y$, $u$ and $v$. Such argument proves the first equivalence.
+First, note that $l(x, y) + 2 = l(s_1, t_1)$ and $l(u, v) + 2 = l(s_2, t_2)$ immediately implies that $x, y \in L(s_1, t_1)$ and $u, v \in L(s_2, t_2)$, so we may replace $F(s_1, s_2)$ with $F(s_1, t_1, s_2)$ as a domain for $x$, and perform the similar action for $y$, $u$ and $v$. This proves the first equivalence.
 
 The second equivalence may be proven by exploiting the fact that $l(x, y) + 2 = l(s_1, t_1)$ (which means that $x$ and $y$ belong to the same shortest path between $s_1$ and $t_1$) is equivalent to $x \in F(s_1, t_1) \wedge y \in F(t_1, x)$, and similarly for $s_2$, $t_2$, $u$ and $v$. 
 \end{proof}
 
-Now we can rewrite the formula \eqref{eq:A} as follows:
+Now we can rewrite \eqref{eq:A} as follows:
 \begin{equation} 
     A(s_1, t_1, s_2, t_2) = \quad
         {\bigvee_{
@@ -91,6 +90,7 @@ Now we can rewrite the formula \eqref{eq:A} as follows:
             u \in F(s_2, t_2, t_1) 
         }
         }}
+        \quad
         {\bigvee_{
         \large \substack{
             y \in F(t_1, x, t_2)\\ 
@@ -99,7 +99,7 @@ Now we can rewrite the formula \eqref{eq:A} as follows:
         }} 2DSP(x, y, u, v)
 \end{equation}
 
-Note the important property of the equation above: the expression inside the first disjunction does not depend on $s_2$. Let's denote it with $ExYV(x, u, s_1, t_1, t_2)$ (an abbreviation for ``exist $y$ and $v$''):
+Note the important property of the equation above: the expression inside the first disjunction does not depend on $s_2$. Let us denote it by $ExYV(x, u, s_1, t_1, t_2)$ (an acronym for ``there exist $y$ and $v$''):
 
 \begin{align} \label{eq:ExYV}
     A(s_1, t_1, s_2, t_2) &= \quad
@@ -118,33 +118,33 @@ Note the important property of the equation above: the expression inside the fir
         }} 2DSP(x, y, u, v) = 2DSP(x, F(t_1, x, t_2), u, F(t_2, u, s_1))\\ 
 \end{align}
 
-Formulae above suggest an idea of a first running time optimization: $A(s_1, t_1, s_2, t_2)$ depend on only $\OO(|V|^2)$ values of $ExYV(x, u, s_1, t_1, t_2)$. So, if we have all necessary value of $ExYV(x, u, s_1, t_1, t_2)$ calculated by the moment we calculate the value of $A(s_1, t_1, s_2, t_2)$, then the total running time needed for calculating all $A(s_1, t_1, s_2, t_2)$ becomes $\OO(|V|^6)$.
+Formulae above suggest the following optimization: $A(s_1, t_1, s_2, t_2)$ only depends on $\OO(|V|^2)$ values of $ExYV(x, u, s_1, t_1, t_2)$. So, if we have all the necessary values of $ExYV(x, u, s_1, t_1, t_2)$ ready by the moment we calculate the value of $A(s_1, t_1, s_2, t_2)$, then the total running time needed for calculating all $A(s_1, t_1, s_2, t_2)$ becomes $\OO(|V|^6)$.
 
-Finally, note that by the formula \eqref{eq:ExYV} we may calculate each value of $ExYV(x, u, s_1, t_1, t_2)$ in $\OO(|V|^2)$. It means that $ExYV(x, u, s_1, t_1, t_2)$ is a suitable auxilary predicate that, on one hand, may be calculated efficiently (in $\OO(|V|^7)$), and on the other hand, is reused multiple times while calculating values of predicate $A(s_1, t_1, s_2, t_2)$, providing the sought running time optimization.
+Finally, note that by \eqref{eq:ExYV} we may calculate each value of $ExYV(x, u, s_1, t_1, t_2)$ in $\OO(|V|^2)$ time. This means that $ExYV(x, u, s_1, t_1, t_2)$ is a suitable auxilary predicate that, on one hand, may be calculated efficiently (in $\OO(|V|^7)$ time), and on the other hand, is reused multiple times while calculating values of predicate $A(s_1, t_1, s_2, t_2)$, providing the sought running time optimization.
 
-The only remaining step is to verify that we can organize the calculations in a suitable order, so that by the moment we use each of the values in the right-hand sides of the formulae \eqref{eq:Q4A} and \eqref{eq:ExYV}, it is already calculated. To show that, we provide the pseudocode of the algorithm \ref{alg:n7} implementing this approach.
+The only remaining step is to verify that we can organize the calculations in an appropriate order; i.e. by the moment we use each of the values in the right-hand sides of \eqref{eq:Q4A} and \eqref{eq:ExYV}, it is already known. To show this, we provide a pseudocode of Algorithm \ref{alg:n7} implementing this approach.
 
 \begin{algorithm}
 \caption{Calculation of $2DSP(s_1, t_1, s_2, t_2)$ in $\OO(|V|^7)$} \label{alg:n7}
 \begin{algorithmic}[1]
 \Procedure{CalculateAll2DSPValues}{$V$, $E$}
-\State $l \gets \text{matrix of pairwise distances in }G$;
-\LineComment{Divide pairs of vertices into groups according to the distance between them.}
-\State $P_i \gets \text{empty list for all }i = 0, \ldots, |V|-1$;
+\State $l \gets \text{matrix of pairwise distances in }G$
+\LineComment{Group pairs of vertices according to the distance between them.}
+\State $P_i \gets \text{empty list for all }i = 0, \ldots, |V|-1$
 \For{$s,t \in V$}
-    \State $\text{Append }(s, t)\text{ to the end of }P_{l(s, t)}$;
+    \State $\text{Append }(s, t)\text{ to }P_{l(s, t)}$
 \EndFor
-\LineComment{Calculate values of the predicate in lexicographical order of pair }
-\LineComment{$(d_{\min}, d_{\max})$ where $d_{\min}$ stands for the smallest of the distances}
-\LineComment{between terminal pairs, and $d_{\max}$ stands for the largest of them.}
+\LineComment{Calculate values of the predicate in lexicographical order of pairs }
+\LineComment{$(d_{\min}, d_{\max})$, where $d_{\min}$ is for the smallest of the distances}
+\LineComment{between terminal pairs and $d_{\max}$ is for the largest of them.}
 \For{$d_{\min} \gets 0, \ldots, |V|-1$}
-    \State $\textsc{CalculateAllExYVValues}(d_{\min})$; \label{line:calcExYV}
+    \State $\textsc{CalculateAllExYVValues}(d_{\min})$ \label{line:calcExYV}
     \For{$d_{\max} \gets d_{\min}, \ldots, |V|-1$}
         \For{$(s_1, t_1) \in P_{d_{\min}}$}
             \For{$(s_2, t_2) \in P_{d_{\max}}$}
-                \State $2DSP(s_1, t_1, s_2, t_2) \gets \textsc{CalculateSingle2DSPValue}(s_1, t_1, s_2, t_2)$;
+                \State $2DSP(s_1, t_1, s_2, t_2) \gets \textsc{CalculateSingle2DSPValue}(s_1, t_1, s_2, t_2)$
                 \LineComment{Finally use the symmetric nature of our predicate.}
-                \State $2DSP(s_2, t_2, s_1, t_1) \gets 2DSP(s_1, t_1, s_2, t_2)$; 
+                \State $2DSP(s_2, t_2, s_1, t_1) \gets 2DSP(s_1, t_1, s_2, t_2)$
             \EndFor
         \EndFor
     \EndFor
@@ -155,7 +155,7 @@ The only remaining step is to verify that we can organize the calculations in a 
     \For{$(s_1,t_1 \in P_d)$}
         \For{$x \in F(s_1, t_1)$}
             \For{$u,t_2 \in V$}
-                \State $ExYV(x,u,s_1,t_1,t_2) \gets 2DSP(x, F(t_1,x,t_2), u, F(t_2,u,s_1))$;
+                \State $ExYV(x,u,s_1,t_1,t_2) \gets 2DSP(x, F(t_1,x,t_2), u, F(t_2,u,s_1))$
             \EndFor
         \EndFor
     \EndFor
@@ -163,59 +163,59 @@ The only remaining step is to verify that we can organize the calculations in a 
 \Statex
 \Procedure{CalculateSingle2DSPValue}{$s_1$, $t_1$, $s_2$, $t_2$}
 \If {$s_1 = t_1 \wedge s_2 = t_2$}
-    \State \Return $s_1 = s_2$; 
+    \State \Return $s_1 = s_2$
 \ElsIf {$(s_1, t_1, s_2, t_2)\text{ is not rigid}$}
-    \State \text{Calculate and return the value according to pt. 2 of thm \ref{main_theorem}};
+    \State \text{Calculate and return the value according to case (2) of Th~\ref{main_theorem}}
 \Else
-    \State $\text{Calculate }Q_2(s_1, t_1, s_2, t_2)\text{ using formula \eqref{eq:Q2}}$; 
+    \State $\text{Calculate }Q_2(s_1, t_1, s_2, t_2)\text{ using \eqref{eq:Q2}}$
     \State $Q_4(s_1, t_1, s_2, t_2) = ExYV(F(s_1, t_1, s_2), F(s_2, t_2, t_1), s_1, t_1, t_2)\enspace\vee\enspace$ 
-    \Statex $\hspace{4.5cm}ExYV(F(s_2, t_2, s_1), F(s_1, t_1, t_2), s_2, t_2, t_1)$; \label{line:useExYV}
-    \State \Return $Q_2(s_1, t_1, s_2, t_2) \vee Q_4(s_1, t_1, s_2, t_2)$;
+    \Statex $\hspace{4.5cm}ExYV(F(s_2, t_2, s_1), F(s_1, t_1, t_2), s_2, t_2, t_1)$ \label{line:useExYV}
+    \State \Return $Q_2(s_1, t_1, s_2, t_2) \vee Q_4(s_1, t_1, s_2, t_2)$
 \EndIf
 \EndProcedure
 \end{algorithmic}
 \end{algorithm}
 
 \begin{proposition} \label{n7_corr1}
-By the moment of calling $\textsc{CalculateAllExYVValues}(d)$ all needed values of predicate $2DSP$ are already calculated.
+By the moment of calling $\textsc{CalculateAllExYVValues}(d)$, all needed values of $2DSP$ are already calculated.
 \end{proposition}
 \begin{proof}
-Note that $\textsc{CalculateAllExYVValues}(d)$ operates only with values of $2DSP(x, y, u, v)$ for $(x, y, u, v)$ s.t. $x \in F(s_1, t_1)$ and $y \in F(t_1,x,t_2) \subseteq F(t_1, x)$, i.e. $l(x, y) = l(s_1, t_1) - 2 = d - 2$, and hence, $\min\{l(x, y), l(u, v)\} \leq l(x, y) = d - 2 < d$. Also note that the only call of $\textsc{CalculateAllExYVValues}(d)$ is located at line \ref{line:calcExYV} and the argument $d$ is equal to $d_{\min}$. It means that the values of $2DSP(x, y, u, v)$ for quadruples $(x, y, u, v)$ s.t. $\min\{l(x, y), l(u, v)\} < d$ are already calculated. 
+Note that $\textsc{CalculateAllExYVValues}(d)$ operates only with values of $2DSP(x, y, u, v)$ for $(x, y, u, v)$ s.t. $x \in F(s_1, t_1)$ and $y \in F(t_1,x,t_2) \subseteq F(t_1, x)$, i.e. $l(x, y) = l(s_1, t_1) - 2 = d - 2$, and hence, $\min\{l(x, y), l(u, v)\} \leq l(x, y) = d - 2 < d$. Also note that the only call to $\textsc{CalculateAllExYVValues}(d)$ is located at line \ref{line:calcExYV} and the argument $d$ is equal to $d_{\min}$. This means that the values of $2DSP(x, y, u, v)$ for quadruples $(x, y, u, v)$ s.t. $\min\{l(x, y), l(u, v)\} < d$ are already calculated. 
 \end{proof}
 
 \begin{proposition} \label{n7_corr2}
-By the execution moment of the line \ref{line:useExYV} of algorithm \ref{alg:n7} all needed values of $ExYV(\cdot, \cdot, \cdot, \cdot, \cdot)$ are already calculated.
+By the moment line \ref{line:useExYV} of Algorithm \ref{alg:n7} is run, all needed values of $ExYV$ are already calculated.
 \end{proposition}
 \begin{proof}
-Due to lemma \ref{eql} we know that $l(s_1, t_1)$, $l(s_2, t_2)$ are equal, so they should both be equal to $d_{\min}$. Last call of $\textsc{CalculateAllExYVValues}$ was for $d = d_{\min}$, so all values of $ExYV(\cdot, \cdot, s, t, \cdot)$ over all $(s, t)$ s.t. $l(s, t) \leq d_{\min}$ are already calculated. Finally, note the fact that the third and the fourth arguments of a predicate $ExYV$ in line \ref{line:useExYV} may only be $(s_1, t_1)$ and $(s_2, t_2)$, which finishes the proof.
+Due to Lemma \ref{eql}, we know that $l(s_1, t_1)$, $l(s_2, t_2)$ are equal, so they should both be equal to $d_{\min}$. The last call to $\textsc{CalculateAllExYVValues}$ was for $d = d_{\min}$, so all values of $ExYV(\cdot, \cdot, s, t, \cdot)$ for all $(s, t)$ s.t. $l(s, t) \leq d_{\min}$ are already calculated. Finally note the fact that the third and the fourth arguments of a predicate $ExYV$ in line \ref{line:useExYV} may only be $(s_1, t_1)$ and $(s_2, t_2)$.
 \end{proof}
 
-Let's estimate the complexity of the obtained algorithm.
+Let us estimate the complexity of the obtained algorithm.
 
 \begin{proposition} \label{n7_rt1}
-Total running time of $\textsc{CalculateAllExYVValues}$ for all $d = 0, \ldots, |V|-1$ is $\OO(|V|^7)$. 
+The total running time of $\textsc{CalculateAllExYVValues}$ for all $d = 0, \ldots, |V|-1$ is $\OO(|V|^7)$. 
 \end{proposition}
 \begin{proof}
-Note that each pair $(s_1, t_1)$ will be processed only when $d = l(s_1, t_1)$, so the total running time of this procedure does not exceed the number of septuples $(s_1, t_1, x, u, t_2, y, v)$, whose number is $|V|^7$.
+Note that each pair $(s_1, t_1)$ will be processed only when $d = l(s_1, t_1)$, so the total running time of this procedure does not exceed the number of septuples $(s_1, t_1, x, u, t_2, y, v)$, i.e. $|V|^7$.
 \end{proof}
 
 \begin{proposition} \label{n7_rt2}
-Running time of one call of $\textsc{CalculateSingle2DSPValue}$ is $\OO(|V|^2)$.
+Each call to $\textsc{CalculateSingle2DSPValue}$ takes $\OO(|V|^2)$ time.
 \end{proposition}
 \begin{proof}
-It is obvious from the formula used to process the rigid quadruples in line \ref{line:useExYV}.
+This is obvious from the formula used to process the rigid quadruples in line \ref{line:useExYV}.
 \end{proof}
 
-Let's also estimate the space complexity.
+Let us also estimate the space complexity.
 
 \begin{proposition} \label{n7_m}
-Algorithm \ref{alg:n7} uses $\OO(|V|^5)$ of memory.
+Algorithm \ref{alg:n7} uses $\OO(|V|^5)$ memory.
 \end{proposition}
 \begin{proof}
-In addition to the memory used in the original algorithm, we introduce the new 5-dimensional binary array $ExYV$, which requires $\Theta(|V|^5)$ of memory.
+In addition to the memory used by the original algorithm, we introduce a new 5-dimensional binary array $ExYV$, which requires $\Theta(|V|^5)$ memory.
 \end{proof}
 
-So, the final result of this section is the following theorem:
+So, the final result of this section is the following
 \begin{theorem}
-Algorithm \ref{alg:n7} calculates the predicate $2DSP(s_1, t_1, s_2, t_2)$ over all quadruples $(s_1, t_1, s_2, t_2)$ in running time of $\OO(|V|^7)$ using $\Theta(|V|^5)$ of memory. 
+Algorithm \ref{alg:n7} calculates the predicate $2DSP(s_1, t_1, s_2, t_2)$ for all quadruples $(s_1, t_1, s_2, t_2)$ in time $\OO(|V|^7)$ using $\Theta(|V|^5)$ memory. 
 \end{theorem}

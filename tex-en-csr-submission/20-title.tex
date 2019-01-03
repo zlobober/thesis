@@ -11,8 +11,7 @@ Yandex LLC, Moscow, Russia}
 \maketitle
 
 \begin{abstract}
-In 1998 Tali Eilam-Tzoreff formulated the $k$DSP problem: given the graph $G$ and $k$ pairs of terminal vertices $(s_1, t_1), (s_2, t_2), \ldots, (s_k, t_k)$, does there exist a $k$-tuple of pairwise disjoint shortest paths between these $k$ pairs of terminals? The most interesting case from the algorithmic point of view is a vertex-disjoint case with $k=2$. For this setting Eilam-Tzoreff provided the algorithm running in $\OO(|V|^8)$ for directed or undirected graphs and for weighted or unit-length edges using the original dynamic programming approach. In this paper we examine the DP relations arising in this problem and reduce the time complexity to $\OO(|V|^6)$ for the unit-length case and to $\OO(|V|^7)$ for the weighed case.
+Consider the following $k$DSP problem: given graph $G$ and $k$ pairs of terminal vertices $(s_1, t_1), (s_2, t_2), \ldots, (s_k, t_k)$, check if there exists a $k$-tuple of pairwise disjoint shortest $s_i$--$t_i$ paths between these $k$ pairs of terminal vertices. Algorithmically, the case of vertex-disjoint paths and $k=2$ turns out to be the most interesting. For this setting, Eilam-Tzoreff established an algorithm running in $\OO(|V|^8)$ time, which relies on dynamic programming (DP) and applies to both directed and undirected graphs and arbitrary positive edge weights (lengths). In this paper we examine the DP relations arising in this problem and reduce the time complexity to $\OO(|V|^6)$ for the unit-length case and to $\OO(|V|^7)$ for the case of general weights.
 
 \keywords{Dynamic programming  \and Shortest paths \and Graph theory.}
 \end{abstract}
-

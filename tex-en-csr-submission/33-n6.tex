@@ -1,21 +1,21 @@
 \section{Reducing running time to $\OO(|V|^6)$}
 
-It is easy to see that the most inefficient part of the algorithm \ref{alg:n7} is a procedure $\textsc{CalculateAllExYVValues}$ whose total running time is $\OO(|V|^7)$. In this section we optimize the running time of calculating $ExYV$ over all arguments to $\OO(|V|^6)$.
+It is easy to see that the most inefficient part of Algorithm \ref{alg:n7} is procedure $\textsc{CalculateAllExYVValues}$ whose total running time is $\OO(|V|^7)$. In this section we optimize the running time of calculating $ExYV$ for all arguments to $\OO(|V|^6)$.
 
-Let us rewrite \eqref{eq:ExYV} by rewriting it in terms of vector substitution into some bilinear form. In this section we will identify bilinear forms on and their matrices in some fixed basis, as well as the vectors with column vectors.
+Let us rephrase \eqref{eq:ExYV} by rewriting it in terms of bilinear forms. In this section we fix some basis and identify bilinear forms their matrices; also vectors are assumed to be written as columns.
 
 \begin{definition}
-Let $V = \{v_0, v_1, \ldots, v_{n-1}\}$ and $S \subseteq V$. Then the characteristic vector of $S$ $\chi[S]$ is a column vector with $1$ at the $i$-th place if $v_i \in S$ and $0$ otherwise.
+Let $V = \{v_0, v_1, \ldots, v_{n-1}\}$ be a certain fixed numbering of vertices and $S \subseteq V$. Then the \emph{characteristic vector $\chi[S]$} of set $S$ is the column vector with $1$ at the $i$-th place if $v_i \in S$ and $0$ otherwise.
 \end{definition}
 
-We are going to express \eqref{eq:ExYV} as substituion of $\chi[F(t_1, x, t_2)]$ and $\chi[F(t_2, u, s_1)]$ into a bilinear form and checking if the result is equal to zero or not. The large caveat here is not to include the values-yet-to-be-calculated into the bilinear form matrix. 
+We claim \eqref{eq:ExYV} amounts to computing the value of a certain bilinear form at vectors $\chi[F(t_1, x, t_2)]$ and $\chi[F(t_2, u, s_1)]$ and checking if the result is zero. A large caveat here is not to rely on any of yet-to-be-calculated values while constructing the matrix of this bilinear form. 
 
 \begin{definition}
-Suppose the values of $2DSP(x, y, u, v)$ for all $(x, y, u, v)$ s.t. $\min\{l(x, y), l(u, v)\} < d$ are already calculated. Define the matrix $2DSP(d,x,u) = (2DSP(d,x,u)_{i,j})_{i,j=0,\ldots,n-1}$ with the following formula:
+Suppose the values of $2DSP(x, y, u, v)$ for all $(x, y, u, v)$ s.t. $\min\{l(x, y), l(u, v)\} < d$ are already calculated. Define matrix $2DSP(d,x,u) = (2DSP(d,x,u)_{i,j})_{i,j=0,\ldots,n-1}$ as follows
 
 \begin{equation}
 2DSP(d,x,u)_{i,j} = \begin{cases}
-    2DSP(x,v_i,u,v_j) & \text{if } l(x,v_i) < d \wedge l(u,v_j) < d \\
+    2DSP(x,v_i,u,v_j) & \text{if } l(x,v_i) < d \text{ and } l(u,v_j) < d \\
     0                 & \text{otherwise}
 \end{cases}
 \end{equation}
@@ -27,30 +27,33 @@ Now we can rewrite \eqref{eq:ExYV}.
 \begin{proposition}
 Suppose the values of $2DSP(x, y, u, v)$ for all $(x, y, u, v)$ s.t. $\min\{l(x, y), l(u, v)\} < d$ are already calculated. Suppose that $l(x, t_1) = l(u, t_2) = d - 1$. Then the following equation holds:
 \begin{equation}
-ExYV(x, u, s_1, t_1, t_2) = \chi[F(t_1, x, t_2)]^T~2DSP(d,x,u)~\chi[F(t_2, u, s_1)] > 0 \label{eq:ExYVbil}
+\label{eq:ExYVbil}
+ExYV(x, u, s_1, t_1, t_2) = \begin{cases}
+     1 & \text{if } \chi[F(t_1, x, t_2)]^T~2DSP(d,x,u)~\chi[F(t_2, u, s_1)] > 0 \\
+     0 & \text{otherwise}
+\end{cases}
 \end{equation}
-where $\cdot > 0$ should be treated as an indicator of the event that the expression is greater than zero.
 \end{proposition}
 \begin{proof}
-Suppose there exist $y$ and $v$ that produce the positive value in the formula \eqref{eq:ExYV}. Suppose that $y = v_i$ and $v = v_j$. Note that $\chi[F(t_1, x, t_2)]_i = \chi[F(t_2, u, s_1)]_j = 1$ as $y \in F(t_1, x, t_2)$ and $v \in F(t_2, u, s_1)$ due to variable domain in \eqref{eq:ExYV}. Also note that $2DSP(d, x, u)_{i,j} = 2DSP(x, y, u, v) = 1$ (as $l(x, y) = l(u, v) = d - 2 < d$). Hence, the value of a bilinear form at our pair of characteristic vectors is at least 1.
+Suppose there exist $y$ and $v$ producing a positive value of \eqref{eq:ExYV}, namely $y = v_i$ and $v = v_j$. Note that $\chi[F(t_1, x, t_2)]_i = \chi[F(t_2, u, s_1)]_j = 1$ as $y \in F(t_1, x, t_2)$ and $v \in F(t_2, u, s_1)$ due to variable domain in \eqref{eq:ExYV}. Also note that $2DSP(d, x, u)_{i,j} = 2DSP(x, y, u, v) = 1$ (as $l(x, y) = l(u, v) = d - 2 < d$). Hence, the value of the bilinear form at our pair of characteristic vectors is at least 1.
 
-By using exactly the same arguments in reverse direction, we show that the right-hand side being at least 1 implies that there exist the desired $y$ and $v$, finishing the proof. 
+By using exactly the same argument in the reverse direction we show that the right-hand side being at least 1 implies that there exist the desired $y$ and $v$, finishing the proof. 
 \end{proof}
 
-We did not achieve any significant speedup yet as we only rewritten the same formulae in a different form. The key idea is we carefully estimate the number of pairs (bilinear form, its right-hand vector argument). 
+We did not achieve any significant speedup yet as we have only rewritten the same formulae in a different way. The key idea is to carefully estimate the number of pairs of bilinear forms and its its right-hand vector argument. 
 
 \begin{proposition}
 There are $\OO(|V|^3)$ bilinear forms that we consider during our algorithm.
 \end{proposition}
 \begin{proof}
-Immediately follows from the fact that each form corresponds to a triple of $(d, x, u)$, each of which takes $|V|$ possible values.
+Immediately follows from the fact that each form corresponds to a triple of $(d, x, u)$, each of whose component takes $|V|$ possible values.
 \end{proof}
 
 \begin{proposition}
-There are $\OO(|V|^4)$ pairs of (bilinear form, its right-hand vector argument) that we consider during our algorithm.
+There are $\OO(|V|^4)$ pairs of bilinear forms and its right-hand vector arguments that we consider during our algorithm.
 \end{proposition}
 \begin{proof}
-Such pair looks like $(2DSP(d, x, u), \chi[F(t_2, u, s_1)])$ with an extra condition of $l(u, t_2) = d - 1$. So, the desired number of pairs is bounded by the number of quintuples $(x, u, t_2, s_1)$, whish is $|V|^4$.
+A pair of the above type is $(2DSP(d, x, u), \chi[F(t_2, u, s_1)])$ with the extra condition of $l(u, t_2) = d - 1$. So, the desired number of pairs is bounded by the number of quintuples $(x, u, t_2, s_1)$, which is $|V|^4$.
 \end{proof}
 
 Define the value of $\psi(x, u, t_2, s_1)$ as follows:
@@ -59,7 +62,7 @@ Define the value of $\psi(x, u, t_2, s_1)$ as follows:
 \psi(x, u, t_2, s_1) = 2DSP(l(u, t_2) + 1, x, u)~\chi[F(t_2, u, s_1)] \label{eq:psi}
 \end{equation}
 
-The formula above provides an upper running time bound for calculating all $\psi(x, u, t_2, s_1)$ of $\OO(|V|^6)$, as each singular value may be calculated in $\OO(|V|^2)$ by multiplying a matrix onto vector in a straightforward manner. 
+The formula above provides an upper time bound of $\OO(|V|^6)$ for calculating all $\psi(x, u, t_2, s_1)$, as each single value may be calculated in $\OO(|V|^2)$ by multiplying a matrix by a vector in a straightforward manner. 
 
 Formula \eqref{eq:ExYVbil} takes the following form:
 
@@ -67,9 +70,9 @@ Formula \eqref{eq:ExYVbil} takes the following form:
 ExYV(x, u, s_1, t_1, t_2) = \chi[F(t_1, x, t_2)]^T \psi(x, u, t_2, s_1) \label{eq:ExYVpsi}
 \end{equation}
 
-Using the new formula, we may calculate $ExYV(x, u, s_1, t_1, t_2)$ in running time of $\OO(|V|)$, so the total running time of calculating all $ExYV(x, u, s_1, t_1, t_2)$ becomes $\OO(|V|^6)$.
+Using the new formula, we may calculate $ExYV(x, u, s_1, t_1, t_2)$ in time $\OO(|V|)$, so the total time of calculating all $ExYV(x, u, s_1, t_1, t_2)$ becomes $\OO(|V|^6)$.
 
-As in the previous article, we provide the pseudocode for our approach (algoritm \ref{alg:n6}) and perform the running time and space complexity analysis.
+As in the previous section, we provide the pseudocode for our approach (Algoritm \ref{alg:n6}) and analyze its running time and space complexity.
 
 \begin{algorithm}
 \caption{Calculation of all $ExYV(x, u, s_1, t_1, t_2)$ in $\OO(|V|^6)$} \label{alg:n6}
@@ -77,13 +80,13 @@ As in the previous article, we provide the pseudocode for our approach (algoritm
 \Procedure{CalculateAllExYVValues}{$d$}
     \For{$(u, t_2) \in P_{d-1}$}
         \For{$x, s_1 \in V$}
-            \State $\psi(x, u, t_2, s_1) \gets 2DSP(l(u, t_2) + 1, x, u)~\chi[F(t_2, u, s_1)]; \label{line:psi}$
+            \State $\psi(x, u, t_2, s_1) \gets 2DSP(l(u, t_2) + 1, x, u)~\chi[F(t_2, u, s_1)] \label{line:psi}$
         \EndFor
     \EndFor
     \For{$(s_1,t_1 \in P_d)$}
         \For{$x \in F(s_1, t_1)$}
             \For{$u,t_2 \in V$}
-                \State $ExYV(x, u, s_1, t_1, t_2) \gets \chi[F(t_1, x, t_2)]^T \psi(x, u, t_2, s_1)$; \label{line:ExYVpsi}
+                \State $ExYV(x, u, s_1, t_1, t_2) \gets \chi[F(t_1, x, t_2)]^T \psi(x, u, t_2, s_1)$ \label{line:ExYVpsi}
             \EndFor
         \EndFor
     \EndFor
@@ -92,24 +95,24 @@ As in the previous article, we provide the pseudocode for our approach (algoritm
 \end{algorithm}
 
 \begin{proposition}
-Total running time of $\textsc{CalculateAllExYVValues}$ for all $d = 0, \ldots, |V|-1$ is $\OO(|V|^6)$. 
+The total running time of $\textsc{CalculateAllExYVValues}$ for all $d = 0, \ldots, |V|-1$ is $\OO(|V|^6)$. 
 \end{proposition}
 \begin{proof}
-In the first outer loop each pair $(u, t_2)$ will be processed for exactly one value of $d = l(u, t_2) + 1$, so the total running time of the first loop does not exceed the number of quadruples $(u, t_2, x, s_1)$ multiplied by the running time of $\OO(|V|^2)$ of the line \ref{line:psi} producing the upper bound of $\OO(|V|^6)$.
+In the first outer loop, each pair $(u, t_2)$ is processed for exactly one value of $d = l(u, t_2) + 1$, so the total running time of the first loop does not exceed the number of quadruples $(u, t_2, x, s_1)$ multiplied by the running time of $\OO(|V|^2)$ of line \ref{line:psi} yielding the upper bound of $\OO(|V|^6)$.
 
-In the second outer loop each pair $(s_1, t_1)$ will be processed for exactly one value of $d = l(s_1, t_1)$, so the total running time of the second loop does not exceed the number of quintuples $(s_1, t_1, x, u, t_2)$ multiplied by the running time $\OO(|V|)$ of the line \ref{line:ExYVpsi} producing the same upper bound of $\OO(|V|^6)$.
+In the second outer loop, each pair $(s_1, t_1)$ is processed for exactly one value of $d = l(s_1, t_1)$, so the total running time of the second loop does not exceed the number of quintuples $(s_1, t_1, x, u, t_2)$ multiplied by the running time $\OO(|V|)$ of line \ref{line:ExYVpsi} yielding the same upper bound of $\OO(|V|^6)$.
 \end{proof}
 
 \begin{proposition}
-Total memory usage of algorithm \ref{alg:n6} is $\OO(|V|^5)$.
+The total memory usage of Algorithm \ref{alg:n6} is $\OO(|V|^5)$.
 \end{proposition}
 \begin{proof}
 In addition to the memory required for \ref{alg:n7}, we also need a 4-dimensional array of vectors $\psi$, which requires $\OO(|V|^5)$ memory.
 \end{proof}
 
-So, the final result of this section is the following theorem:
+Hence the final result of this section is the following theorem:
 \begin{theorem}
-Algorithm \ref{alg:n6} calculates the predicate $2DSP(s_1, t_1, s_2, t_2)$ over all quadruples $(s_1, t_1, s_2, t_2)$ in running time of $O(|V|^6)$ using $\Theta(|V|^5)$ of memory. 
+Algorithm \ref{alg:n6} calculates predicate $2DSP(s_1, t_1, s_2, t_2)$ forr all quadruples $(s_1, t_1, s_2, t_2)$ in time $O(|V|^6)$ using $\Theta(|V|^5)$ memory. 
 \end{theorem}
 
-Let us also note an interesting feature of the obtained algorithm. In line \ref{line:psi} we repeatedly multiply the same matrix onto a large number of column vectors. For each matrix, if we group $\OO(|V|)$ possible vectors into a separate matrix, the desired procedure will be expressible in terms of matrix multiplication, which may be done more efficiently in running time of $\OO(|V|^\omega)$ with $\omega < 2.3727$ (\cite{Williams}). But even if we use such feature and reduce the running time of this part of algorithm to $\OO(|V|^{{3 + \omega}})$, we still have the parts of algorithm combined into the $Q_2$-part of the theorem, each of which require the running time of $\OO(|V|^6)$, which we do not know how to deal with yet.
+Let us also note an interesting feature of the obtained algorithm. In line \ref{line:psi} we repeatedly multiply the same matrix by a large number of column vectors. For each matrix, if we group $\OO(|V|)$ possible vectors into a separate matrix, the desired procedure becomes expressible in terms of matrix multiplication, which may be done more efficiently in time $\OO(|V|^\omega)$ with $\omega < 2.3727$ (\cite{Williams}). But even if we use this observation and reduce the running time of this part of the algorithm to $\OO(|V|^{{3 + \omega}})$, computing the values of $Q_2$ (which takes $\OO(|V|^6)$ time in total) becomes the bottleneck.
