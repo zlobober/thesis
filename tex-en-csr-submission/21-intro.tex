@@ -4,7 +4,7 @@ Consider the following general combinatorial problem: \emph{Given a graph $G = (
 
 Graph $G$ above may either be directed or undirected; disjointness property may require paths to be either node-disjoint or edge-disjoint; finally the graph may be either weighted (with positive lengths assigned to edges) or unweighted (having all-unit edge lengths). Clearly there are 8 problem versions described above. For example, we may consider the undirected weighted vertex-disjoint version of $k$DSP.
 
-In \cite{ET} it is proven that if $k$ is a part input then $k$DSP immediately becomes NP-complete even in the planar unit-length case irrespective of whether the graph is directed and whether we choose vertex-disjoint paths or edge-disjoint paths. 
+In \cite{ET} it is proven that if $k$ is a part of the input then $k$DSP immediately becomes NP-complete even in the planar unit-length case irrespective of whether the graph is directed and whether we choose vertex-disjoint paths or edge-disjoint paths. 
 
 In this article we will concentrate on the case $k=2$. For weighted undirected vertex-disjoint case, Eilam-Tzoreff provided a polynomial time algorithm based on a dynamic programming approach. He also provided a linear-time reduction from the edge-disjoint case to the vertex-disjoint case. The primary drawback of the algorithm of Eilam-Tzoreff is its unsatisfactory running time of $\OO(|V|^8)$. This motivates a natural question --- is it possible to solve the problem faster?
 

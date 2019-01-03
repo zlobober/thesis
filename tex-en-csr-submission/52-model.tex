@@ -1,9 +1,9 @@
-The facts above are enough to provide and prove the original algorithm \ref{alg:main} of Eilam-Tzoreff.
+The facts above are enough to provide and prove the original algorithm \ref{alg:n8} of Eilam-Tzoreff.
 
 Let us estimate the running time of all parts of the algorithm.
 
 \begin{proposition}
-Construction of a pairwise distance matrix in line \ref{line:floyd} of algorithm \ref{alg:main} may be done in $\OO(|V|^3)$.
+Construction of a pairwise distance matrix in line \ref{line:floyd} of algorithm \ref{alg:n8} may be done in $\OO(|V|^3)$.
 \end{proposition}
 \begin{proof}
 We can use a well-known algorithm of Floyd-Warshall (\cite{Floyd}, \cite{CLRS}).
@@ -19,7 +19,7 @@ Line \ref{line:cQ2} corresponds to a group of dependent quadruples that differ f
 
 Finally, line \ref{line:cQ4} corresponds to a group of dependent quadruples that differ from $(s_1, t_1, s_2, t_2)$ in four components, hence, this line requires no more than $\OO(|V|^4)$ operations. \end{proof}
 
-It is easy to see that the most inefficient part of a program is calculation of $Q_4(s_1, t_1, s_2, t_2)$. Let us show that the algorithm \ref{alg:main} may actually work in $\Theta(|V|^8)$ on specific graphs. In order to do so, we should present a family of arbitrary large graphs for which the running time of algorithm \ref{alg:main} will be arbitrarily large. 
+It is easy to see that the most inefficient part of a program is calculation of $Q_4(s_1, t_1, s_2, t_2)$. Let us show that the algorithm \ref{alg:n8} may actually work in $\Theta(|V|^8)$ on specific graphs. In order to do so, we should present a family of arbitrary large graphs for which the running time of algorithm \ref{alg:n8} will be arbitrarily large. 
 
 \begin{theorem}
 Let's build a graph $G_k = (V_k, E_k)$, in which
@@ -31,12 +31,12 @@ E_k &= \bigsqcup\limits_{i = 0,\ldots,7} S_i \times S_{(i+1) \bmod 8} \quad\sqcu
 \end{align}
 
 \begin{figure}[H]
-\caption{Graph $G_k$, for which running time of algorithm \ref{alg:main} is $\Theta(|V|^8)$}
+\caption{Graph $G_k$, for which running time of algorithm \ref{alg:n8} is $\Theta(|V|^8)$}
 \centering
 \includegraphics[width=0.5\textwidth]{pic.1}
 \end{figure}
 
-Note that for the constructed graph $|V_k| = 12k + 1$ and $|E_k| = 12k^2 + 4k$. The running time of the algorithm \ref{alg:main} at graph $G_k$ is $\Theta(k^8) = \Theta(|V|^8)$.
+Note that for the constructed graph $|V_k| = 12k + 1$ and $|E_k| = 12k^2 + 4k$. The running time of the algorithm \ref{alg:n8} at graph $G_k$ is $\Theta(k^8) = \Theta(|V|^8)$.
 
 \end{theorem}
 \begin{proof}
@@ -44,12 +44,12 @@ Suppose that $s_1 \in S_0$, $s_2 \in S_2$, $t_1 \in S_4$, $t_2 \in S_6$. In this
 
 Also note that if $x \in S_1$, $u \in S_3$, $y \in S_5$, $v \in S_7$, then $(s_1, t_1, s_2, t_2) \succ (x, y, u, v)$. Indeed, we have $x \in F(s_1, s_2)$, $u \in F(s_2, t_1)$, $y \in F(t_1, t_2)$, $v \in F(t_2, s_1)$, and also $l(x, y) = 2 = l(s_1, t_1) - 2$ and $l(u, v) = 2 = l(s_2, t_2) - 2$, implying that $(x, y, u, v)$ belongs to the first expression of formula \ref{eq:Q4}.
 
-Finally note that the number of octuples $(s_1, t_1, s_2, t_2, x, y, u, v)$ is exactly $k^8 = \Theta(|V|^8)$, so the total running time of a line \ref{line:cQ4} of the algorithm \ref{alg:main} is at least $\Theta(|V|^8)$.
+Finally note that the number of octuples $(s_1, t_1, s_2, t_2, x, y, u, v)$ is exactly $k^8 = \Theta(|V|^8)$, so the total running time of a line \ref{line:cQ4} of the algorithm \ref{alg:n8} is at least $\Theta(|V|^8)$.
 \end{proof}
 
-Let's also estimate the space complexity of the algorithm \ref{alg:main}
+Let's also estimate the space complexity of the algorithm \ref{alg:n8}
 \begin{theorem}
-Algorithm \ref{alg:main} requires $\OO(|V|^4)$ of memory.
+Algorithm \ref{alg:n8} requires $\OO(|V|^4)$ of memory.
 \end{theorem}
 \begin{proof}
 We need $\OO(|V|^2)$ of extra memory to save the shortest distance matrix and a 4-dimensional array for storing the predicate $2DSP$ values, for which we need $\OO(|V|^4)$ of memory.

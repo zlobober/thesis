@@ -3,7 +3,7 @@
 We implemented 4 algorithms:
 
 \begin{itemize}
-\item Original algorithm \ref{alg:main} working in $\OO(|V|^8)$;
+\item Original algorithm \ref{alg:n8} working in $\OO(|V|^8)$;
 \item Algorithm \ref{alg:n7} working in $\OO(|V|^7)$;
 \item Algorithm \ref{alg:n6} working in $\OO(|V|^6)$;
 \item Bruteforce algorithm \ref{alg:brute} working in exponential running time $\OO(2^{|V|} \cdot |V|)$, not relying on the theorem \ref{main_theorem}.
@@ -32,7 +32,7 @@ We implemented 4 algorithms:
 
 All mentioned algorithms were implemented as the routines in a single program, allowing their simulateneous evaluation on the same graph $G$ (either provided or randomly generated from some probability distribution). The program was run on all enumerated connected graphs consisting of no more than $8$ vertices that helped to find the enormous number of mistakes in the implementation of formula \eqref{eq:Q2}. The number of enumerated connected graphs on $9$ vertices exceeds $6 \cdot 10^{10}$, so the experimental evaluation of the algorithms on all $9$ vertex graphs with only one execution thread is not practically possible. 
 
-As a next step, we ran $10^4$ instances of a program at the computational cluster of Yandex company, each of which evaluated $10^5$ random $10$-vertex graphs and assered that all implemented algorithms  produce the same result. Such stress test discovered a few more mistakes in the implementation of the original algorithm \ref{alg:main} and its optimized versios. Interesting detail was that all of the mistakes were located exactly in the hardest case of rigid quadruple $(s_1, t_1, s_2, t_2)$ (formula \eqref{eq:Q4}). Hence, we can conclude that the minimum size of the graph, that triggers the hardest case of the approach of Eilam-Tzoreff is either $9$ or $10$. An example of a ``complex'' graph $H$ consisting of $10$ vertices, for which the transitions defined by the formula \eqref{eq:Q4} are important, is provided on a picture \ref{pic:hard}.
+As a next step, we ran $10^4$ instances of a program at the computational cluster of Yandex company, each of which evaluated $10^5$ random $10$-vertex graphs and assered that all implemented algorithms  produce the same result. Such stress test discovered a few more mistakes in the implementation of the original algorithm \ref{alg:n8} and its optimized versions. Interesting detail was that all of the mistakes were located exactly in the hardest case of rigid quadruple $(s_1, t_1, s_2, t_2)$ (formula \eqref{eq:Q4}). Hence, we can conclude that the minimum size of the graph, that triggers the hardest case of the approach of Eilam-Tzoreff is either $9$ or $10$. An example of a ``complex'' graph $H$ consisting of $10$ vertices, for which the transitions defined by the formula \eqref{eq:Q4} are important, is provided on a picture \ref{pic:hard}.
 
 \begin{figure}[H]
 \caption{Graph $H$}

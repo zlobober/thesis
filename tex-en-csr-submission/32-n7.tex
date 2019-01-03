@@ -7,10 +7,10 @@ We start by optimizing the DP transitions given by \eqref{eq:Q4} as all the rema
     A(s_1, t_1, s_2, t_2) = \quad
         \smashoperator{\bigvee_{
         \large \substack{
-            %x \in F(s_1, s_2)\\ 
-            %y \in F(t_1, t_2)\\ 
-            %u \in F(s_2, t_1)\\ 
-            %v \in F(t_2, s_1)\\ 
+            x \in F(s_1, s_2)\\ 
+            y \in F(t_1, t_2)\\ 
+            u \in F(s_2, t_1)\\ 
+            v \in F(t_2, s_1)\\ 
             l(x, y) + 2 = l(s_1, t_1)\\ 
             l(u, v) + 2 = l(s_2, t_2)
         }
@@ -169,7 +169,7 @@ The only remaining step is to verify that we can organize the calculations in an
 \Else
     \State $\text{Calculate }Q_2(s_1, t_1, s_2, t_2)\text{ using \eqref{eq:Q2}}$
     \State $Q_4(s_1, t_1, s_2, t_2) = ExYV(F(s_1, t_1, s_2), F(s_2, t_2, t_1), s_1, t_1, t_2)\enspace\vee\enspace$ 
-    \Statex $\hspace{4.5cm}ExYV(F(s_2, t_2, s_1), F(s_1, t_1, t_2), s_2, t_2, t_1)$ \label{line:useExYV}
+    \Statex $\hspace{3.65cm}ExYV(F(s_2, t_2, s_1), F(s_1, t_1, t_2), s_2, t_2, t_1)$ \label{line:useExYV}
     \State \Return $Q_2(s_1, t_1, s_2, t_2) \vee Q_4(s_1, t_1, s_2, t_2)$
 \EndIf
 \EndProcedure

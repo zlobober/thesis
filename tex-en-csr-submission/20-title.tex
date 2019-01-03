@@ -1,17 +1,15 @@
 \title{Faster 2-Disjoint-Shortest-Paths Algorithm}
 
-\author{Maxim Akhmedov\inst{1, 3}\orcidID{0000-0002-7947-1416} \and \\
-Maxim Babenko\inst{2, 3}\orcidID{0000-0003-2877-9725}}
-\authorrunning{M. Akhmedov, M. Babenko}
+\author{Maxim Akhmedov\inst{1, 2}\orcidID{0000-0002-7947-1416}}
+\authorrunning{M. Akhmedov}
 
 \institute{Moscow State University, Department of Mathematical Logic and Algorithms, Moscow, Russia \\ \email{akhmedov@lpcs.math.msu.su} \and
-Higher School of Economics, Faculty of Computer Science, Moscow, Russia \\ \email{mbabenko@hse.ru} \and
-Yandex LLC, Moscow, Russia}
+Yandex LLC, Moscow, Russia \\ \email{max42@yandex-team.ru}}
 
 \maketitle
 
 \begin{abstract}
 Consider the following $k$DSP problem: given graph $G$ and $k$ pairs of terminal vertices $(s_1, t_1), (s_2, t_2), \ldots, (s_k, t_k)$, check if there exists a $k$-tuple of pairwise disjoint shortest $s_i$--$t_i$ paths between these $k$ pairs of terminal vertices. Algorithmically, the case of vertex-disjoint paths and $k=2$ turns out to be the most interesting. For this setting, Eilam-Tzoreff established an algorithm running in $\OO(|V|^8)$ time, which relies on dynamic programming (DP) and applies to both directed and undirected graphs and arbitrary positive edge weights (lengths). In this paper we examine the DP relations arising in this problem and reduce the time complexity to $\OO(|V|^6)$ for the unit-length case and to $\OO(|V|^7)$ for the case of general weights.
 
-\keywords{Dynamic programming  \and Shortest paths \and Graph theory.}
+\keywords{Dynamic programming \and Shortest paths \and Graph theory \and Linear algebra.}
 \end{abstract}
