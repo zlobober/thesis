@@ -125,7 +125,7 @@ Finally, note that by the formula \eqref{eq:ExYV} we may calculate each value of
 The only remaining step is to verify that we can organize the calculations in a suitable order, so that by the moment we use each of the values in the right-hand sides of the formulae \eqref{eq:Q4A} and \eqref{eq:ExYV}, it is already calculated. To show that, we provide the pseudocode of the algorithm \ref{alg:n7} implementing this approach.
 
 \begin{algorithm}
-\caption{Calculation of $2DSP(s_1, t_1, s_2, t_2)$ in $O(|V|^7)$} \label{alg:n7}
+\caption{Calculation of $2DSP(s_1, t_1, s_2, t_2)$ in $\OO(|V|^7)$} \label{alg:n7}
 \begin{algorithmic}[1]
 \Procedure{CalculateAll2DSPValues}{$V$, $E$}
 \State $l \gets \text{matrix of pairwise distances in }G$;
@@ -165,7 +165,7 @@ The only remaining step is to verify that we can organize the calculations in a 
 \If {$s_1 = t_1 \wedge s_2 = t_2$}
     \State \Return $s_1 = s_2$; 
 \ElsIf {$(s_1, t_1, s_2, t_2)\text{ is not rigid}$}
-    \State \text{Calculate and return the value according to pt. 1 of thm \ref{main_theorem}};
+    \State \text{Calculate and return the value according to pt. 2 of thm \ref{main_theorem}};
 \Else
     \State $\text{Calculate }Q_2(s_1, t_1, s_2, t_2)\text{ using formula \eqref{eq:Q2}}$; 
     \State $Q_4(s_1, t_1, s_2, t_2) = ExYV(F(s_1, t_1, s_2), F(s_2, t_2, t_1), s_1, t_1, t_2)\enspace\vee\enspace$ 

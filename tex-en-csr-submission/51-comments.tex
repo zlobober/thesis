@@ -1,3 +1,4 @@
+\clearpage
 \section{Appendix 1. Original algorithm by Eilam-Tzoreff}
 
 Consider graph $G$ to be unweighted, i.e. $w(e) = 1$ for any edge $e \in E$. In such case the length of any path is equal to the number of edges in it.
@@ -29,19 +30,21 @@ In the part 1 of theorem \ref{main_theorem} the right-hand side for $2DSP(s_1, t
 For the parts 2 and 3 note the following property: if $(s_1, t_1, s_2, t_2) \succ (x, y, u, v)$, then $l(x, y) \leq l(s_1, t_1)$, $l(u, v) \leq l(s_2, t_2)$ and at least one of this inequalities is strict. For $Q_2$ this is correct due to proposotion \ref{q2_structure} about structure of expressions compounding $Q_2$, and for $Q_4$ this is correct due to fact that for valid quadruple $(x, y, u, v)$ $l(x, y) = l(s_1, t_1) - 2$ and $l(u, v) = l(s_2, t_2) - 2$.
 \end{proof}
 
+Finally, let's prove an important property of rigid quadruples.
+
 \begin{proposition} \label{eql_ap}
-For a rigid quadruple $(s_1, t_1, s_2, t_2)$ distances between the terminal pairs coincide, i.e. $l(s_1, t_1) = l(s_2, t_2)$.
+For a rigid quadruple $(s_1, t_1, s_2, t_2)$ it is true that $l(s_1, t_1) = l(s_2, t_2)$.
 \end{proposition}
-\begin{proof} ~
+\begin{proof} 
 
-$s_1, t_1 \in L(s_2, t_2) \Rightarrow l(s_1, s_2) + l(s_2, t_1) = l(s_1, t_2) + l(t_2, t_1)$, t.k. oba vy'razheniya ravny' $l(s_1, t_1)$.
+$s_1, t_1 \in L(s_2, t_2) \Rightarrow l(s_1, s_2) + l(s_2, t_1) = l(s_1, t_2) + l(t_2, t_1)$, since both expressions are equal to $l(s_1, t_1)$.
 
-$s_2, t_2 \in L(s_1, t_1) \Rightarrow l(s_2, s_1) + l(s_1, t_2) = l(s_2, t_1) + l(t_1, t_2)$, t.k. oba vy'razheniya ravny' $l(s_2, t_2)$.
+$s_2, t_2 \in L(s_1, t_1) \Rightarrow l(s_2, s_1) + l(s_1, t_2) = l(s_2, t_1) + l(t_1, t_2)$, since both expressions are equal to $l(s_2, t_2)$.
 
-Putyom slozheniya dvux poslednix ravenstv i sokrashheniya odinakovy'x slagaemy'x, poluchim sootnoshenie $l(s_1, s_2) = l(t_2, t_1)$. 
+By adding together two last equations and canceling the same terms, we obtain the equation $l(s_1, s_2) = l(t_2, t_1)$. 
 
-Zamenyaya $l(s_1, s_2)$ na $l(t_2, t_1)$ v pervom ravenstve, poluchim takzhe, chto $l(s_2, t_1) = l(s_1, t_2)$.
+By replacing $l(s_1, s_2)$ with $l(t_2, t_1)$ in the first equation, we also obtain that $l(s_2, t_1) = l(s_1, t_2)$.
 
-Nakonecz, zametim, chto $l(s_1, t_1) = l(s_1, s_2) + l(s_2, t_1) = l(t_1, t_2) + l(s_2, t_1) = l(s_2, t_2)$, chto zavershaet dokazatel`stvo predlozheniya.
+Finally, note that $l(s_1, t_1) = l(s_1, s_2) + l(s_2, t_1) = l(t_1, t_2) + l(s_2, t_1) = l(s_2, t_2)$, which finishes the proof.
 \end{proof}
 
