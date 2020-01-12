@@ -1,31 +1,43 @@
 \section{Introduction}
 
-Consider the following general combinatorial problem: \emph{Given a graph $G = (V, E)$ and $k$ pairs of vertices $(s_i, t_i)$ ($s_i, t_i \in V$, $1 \leq i \leq k$), find out if there exist a $k$-tuple of paths $P_i$ such that: 1) path $P_i$ goes from $s_i$ to $t_i$ 2) each $P_i$ is one of the shortest paths from $s_i$ to $t_i$ and 3) paths are pairwise disjoint.}
+Consider family of three following combinatorial problems. In all problems, given a graph $G = (V, E)$ and $k$ pairs of vertices $(s_i, t_i)$ ($s_i, t_i \in V$, $1 \leq i \leq k$), we should find out if there exist a $k$-tuple of paths $P_i$ such that certain conditions hold. Possible conditions are listed below.
 
-Graph $G$ above may either be directed or undirected; disjointness property may require paths to be either node-disjoint or edge-disjoint; finally the graph may be either weighted (with positive lengths assigned to edges) or unweighted (having all-unit edge lengths). Clearly there are 8 problem versions described above. For example, we may consider the undirected weighted vertex-disjoint version of $k$DSP.
+\textbf{$k$DP problem}:
+\begin{enumerate}[leftmargin=1.5cm,topsep=0cm]
+    \item path $P_i$ goes from $s_i$ to $t_i$;
+    \item all paths are pairwise disjoint.
+\end{enumerate}
 
-In \cite{ET} it is proven that if $k$ is a part of the input then $k$DSP immediately becomes NP-complete even in the planar unit-length case irrespective of whether the graph is directed and whether we choose vertex-disjoint paths or edge-disjoint paths. 
+\textbf{$k$DSP problem}: 
+\begin{enumerate}[leftmargin=1.5cm,topsep=0cm]
+    \item path $P_i$ goes from $s_i$ to $t_i$;
+    \item all paths are pairwise disjoint;
+    \item each $P_i$ is one of the shortest paths from $s_i$ to $t_i$.
+\end{enumerate}
 
-In this article we will concentrate on the case $k=2$. For weighted undirected vertex-disjoint case, Eilam-Tzoreff provided a polynomial time algorithm based on a dynamic programming approach. He also provided a linear-time reduction from the edge-disjoint case to the vertex-disjoint case. The primary drawback of the algorithm of Eilam-Tzoreff is its unsatisfactory running time of $\OO(|V|^8)$. This motivates a natural question --- is it possible to solve the problem faster?
+\textbf{\textit{min-sum} $k$DSP problem}: 
+\begin{enumerate}[leftmargin=1.5cm,topsep=0cm] 
+    \item path $P_i$ goes from $s_i$ to $t_i$;
+    \item all paths are pairwise disjoint;
+    \item total length of all $P_i$ is smallest possible.
+\end{enumerate}
 
-In this article we obtain the algorithm with running time of $\OO(|V|^6)$ for the unit-length case of $2$DSP and the algorithm with running time of $\OO(|V|^7)$ for the weighted case of $2$DSP (in both cases we consider the vertex-disjoint undirected formulation). Our algorithms may be viewed as modificiations of Eilam-Tzoreff algorithm with two improvements. The first one is somewhat standard to dynamic programming and consists of choosing the appropriate computation order enabling us to factor the problem into two independent subproblems with better running time. The second one is novel and works as follows: we interpret the computationally hardest subroutine of the algorithm as taking the value $x^T\beta y$ of a certain bilinear form $\beta$ at some pair of vectors $x$, $y$, and then carefully analyze the triples $\beta, x, y$ arising during the computation. It turns out that by pre-evaulating the partial products $x^T \beta$ we may reduce the running time complexity even further.
+Graph $G$ above may either be directed or undirected; disjointness property may require paths to be either node-disjoint or edge-disjoint; finally the graph may be either weighted (with positive lengths assigned to edges) or unweighted (having all-unit edge lengths). Clearly there are 4 problem versions for $k$DP and 8 problem versions for $k$DSP and \textit{min-sum} $k$DSP. For example, one may consider the undirected weighted vertex-disjoint version of $k$DSP.
+
+These three problems are closely related to each other. One may verify that an algorithm solving \textit{min-sum} $k$DSP may be reduced to a solution for both $k$DP and $k$DSP. First reduction is trivial, while second can be done by checking if the total length of paths in the algorithm output is equal to the sum of shortest path lengths over all pairs $(s_i, t_i)$. Thus $k$DP and $k$DSP are easier than \textit{min-sum} $k$DSP. There is no direct reduction between $k$DP and $k$DSP, but questions arising in these problems tend to be connected.
+
+The $k$DP problem is well-studied. Directed $k$DP problem is NP-complete for $k \geq 2$ due to Fortune, Hopcroft and Wyllie \cite{FHW}. Undirected $k$DP is known to have polynomial-time algorithm for any fixed $k$ (\cite{RS}). For $k = 2$ there exists an algorithm by Gustedt \cite{Gustedt} with $\OO(|E| \log |V|)$ running time. If $k$ is a part of problem input, undeirected $k$DP problem is NP-complete even for planar graphs due to Lynch (\cite{Lynch}).
+
+The \textit{min-sum} $k$DSP problem have been recently studied by different authors; there is a 2014 result of Björklund and Husfeldt \cite{BHICALP} providing a Monte Carlo algorithm for unweighted case running in $\OO(|V|^{11})$ using algebraic approach with permanents over quotent rings. There is another approach by Hirai and Namba \cite{HN} for the same problem basing on hafnians modulo $2^k$ and classical reduction from $T$-paths to matchings due to Gallai \cite{Gallai} yielding another polynomial bound for \textit{min-sum} $kDSP$ for fixed $k$. For planar case there is a result by Datta et al. \cite{Datta} yielding an $\OO(n^\omega)$ randomized sequential algorithm with restrition that all terminals lie on a single face of a pair of faces. There is also a result for cubic planar graphs due to Björklund and Husfeldt in \cite{BHPlanar} providing deterministic algorithm with sequential complexity of $\OO(|V|^{\omega / 2 + 2} L^2)$ where edge weights are from $\{1, 2, \ldots, L\}$. 
+
+As well as $k$DP, $k$DSP immediately becomes NP-complete $k$ is a part of the input then even in the planar unit-length case irrespective of whether the graph is directed and whether we choose vertex-disjoint paths or edge-disjoint paths (\cite{ET}).
+
+In this article we will concentrate on the 2DSP problem. For weighted undirected vertex-disjoint case, Eilam-Tzoreff provided a polynomial time algorithm based on a dynamic programming approach. He also provided a linear-time reduction from the edge-disjoint case to the vertex-disjoint case. The algorithm of Eilam-Tzoreff has is running time of $\OO(|V|^8)$. Such running time bound motivates a natural question --- is it possible to solve the problem faster?
+
+We obtain the algorithm with running time of $\OO(|V|^6)$ for the unit-length case of $2$DSP and the algorithm with running time of $\OO(|V|^7)$ for the weighted case of $2$DSP (in both cases we consider the vertex-disjoint undirected formulation). Our algorithms may be viewed as modificiations of Eilam-Tzoreff algorithm with two improvements. The first one is somewhat standard to dynamic programming and consists of choosing the appropriate computation order enabling us to factor the problem into two independent subproblems with better running time. 
+
+The second improvement is novel and works as follows: we interpret the computationally hardest subroutine of the algorithm as taking the value $x^T\beta y$ of a certain bilinear form $\beta$ at some pair of vectors $x$, $y$, and then analyze the triples $\beta, x, y$ arising during the computation. It turns out that by pre-evaulating the partial products $x^T \beta$ we may reduce the running time complexity even further.
 
 As a proof of concept, the obtained algorithms were implemented in C++. With their use, the correctness of the algorithm was checked for all possible unweighted graphs of small size ($|V| \leq 8$) and for a significant number of connected graphs of larger size ($|V| = 10, 20, 30$). 
-
-% This paper is structured in the following manner:
-
-% Glava 1 soderzhit vse neobxodimy'e opredeleniya iz stat`i \cite{ET}, a takzhe osnovnoj rezul`tat stat`i, na kotorom osnovy'vaetsya b\'{o}l`shaya chast` dannoj raboty'. 
-
-% Glava 2 soderzhit ryad vspomogatel`ny'x utverzhdenij, neobxodimy'x dlya postroeniya model`nogo algoritma dlya nevzveshennogo sluchaya, s kotory'm i budet vestis` dal`nejshaya rabota po optimizacii.
-
-% Glava 3 soderzhit model`ny'j algoritm dlya nevzveshennogo sluchaya s dokazatel`stvom nizhnej i verxnej ocenki na vremya raboty' algoritma.
-
-% Glava 4 soderzhit nablyudeniya, neobxodimy'e, dlya umen`sheniya vremeni raboty' algoritma dlya nevzveshennj zadachi v xudshem sluchae do $\OO(|V|^7)$.
-
-% Glava 5 soderzhit nablyudenie, neobxodimy'e, dlya umen`sheniya vremeni raboty' algoritma dlya nevzveshennoj zadachi v xudshem sluchae do $\OO(|V|^6)$.
-
-% Glava 6 soderzhit prakticheskie rezul`taty', poluchenny'e vo vremya realizacii model`nogo algoritma dlya nevzveshennoj zadachi i ego optimizirovanny'x versij v vide programmy' na yazy'ke programmirovaniya C++.
-
-% Glava 7 soderzhit ryad dopolnitel`ny'x nablyudenij, obobshhayushhix poluchenny'j algoritm na sluchaj vzveshenny'x grafov cenoj dopolnitel`nogo mnozhitelya v $|V|$ vo vremeni raboty', a takzhe potencial`no pomogayushhix poluchit` eshhyo bolee e`ffektivnoe reshenie. 
 
 The source code of our implementations and the LaTeX sources of this article (both in English and in Russian) are available at \url{https://github.com/zlobober/thesis}.
