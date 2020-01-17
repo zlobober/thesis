@@ -7,6 +7,12 @@ Part 1 of theorem \ref{main_theorem} provides the basis for a recursion: indeed,
 
 Part 2 of theorem \ref{main_theorem} is also pretty clear: let's provide an inductive argument. For example, suppose that $s_1 \notin L(s_2, t_2)$, $s_1 \neq s_2$ and at the same time $2DSP(x, t_1, s_2, t_2) = 1$ for some $x \in F(s_1, t_1)$. Consider a pair of shortest paths $(P_1', P_2)$ that exists for pair of terminals $(x, t_1)$ and $(s_2, t_2)$. Let us show how $P_1'$ may be extended into a new path $P_1$ connecting $s_1$ and $t_1$ in a shortest manner that is disjoint from $P_2$ (which will prove that $2DSP(s_1, t_1, s_2, t_2)$ is indeed equal to $1$).
 
+\begin{figure}[H]
+\label{pic:ill2}
+\centering
+\includegraphics[width=0.4\textwidth]{pic.4}
+\end{figure}
+
 Let $P_1 = \{s_1\} \sqcup P_1'$. Note that $P_1' \cap P_2 = \varnothing$, and at the same time $s_1 \notin L(s_2, t_2) \supseteq P_2$. Hence, we have $P_1 \cap P_2 = \varnothing$. On the other hand, we have that, if $P_1, P_2$ is the sought pair of shortest paths connecting $s_1$ with $t_1$ and $s_2$ with $t_2$, we can take $x$ be equal to the successor of $s_1$ in $P_1$ and obtain that $2DSP(x, t_1, s_2, t_2) = 1$ as $P_1' = P_1 \sm \{s_1\}$ and $P_2$ is a pair of disjoint shortest paths.
 
 Part 3 of the theorem \ref{main_theorem} describes cases when the inductive argument is not applicable. In \cite{ET} Eilam-Tzoreff performs a rigorous case analysis, which implies that $2DSP(s_1, t_1, s_2, t_2)$  may be defined by the value of $2DSP$ at 18 groups of vertex quadruples, components of which either coincide with the corresponding components of $(s_1, t_1, s_2, t_2)$ or are adjacent with them in a specific manner. Let us show some properties of the formulae in this part of theorem.

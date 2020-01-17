@@ -1,6 +1,7 @@
-prologues := 3
-
+input metagraph;
 input latexmp;
+
+prologues := 3
 
 u = 5cm;
 
@@ -80,4 +81,56 @@ beginfig(2)
     endfor;
 endfig;
 
+beginfig(3)
+    u := 1cm;
+
+    noderadius := 0.3u;
+    node.x(textext("$x$"));
+    node.a(textext("$a$"));
+    node.b(textext("$b$"));
+    node.c(textext("$c$"));
+    node.d(textext("$d$"));
+    node.y(textext("$y$"));
+    node.zz(textext("$z$"));
+    node.e(textext("$e$"));
+    x.c = (5u, 0u);
+    a.c = x.c + (-2u, 1.5u);
+    b.c = x.c + (1u, 1.5u);
+    c.c = a.c + (0, 3u);
+    d.c = b.c + (-1u, 3u);
+    y.c = c.c + (1u, 1.5u);
+    zz.c = y.c + (3u, -2u);
+    e.c = b.c + (2u, 0u);
+    drawboxed(x, a, b, c, d, y, zz, e);
+    draw arc(x)(--)(a);
+    draw arc(x)(--)(b);
+    draw arc(a)(--)(b);
+    draw arc(a)(--)(c);
+    draw arc(a)(--)(d);
+    draw arc(b)(--)(d);
+    draw arc(c)(--)(y);
+    draw arc(d)(--)(y);
+    draw arc(d)(--)(zz);
+    draw arc(x)(--)(e);
+    draw arc(b)(--)(zz);
+    draw arc(e)(--)(zz);
+endfig;
+
+beginfig(4)
+    u := 1.5cm;
+    node.s1(textext("$s_1$"));
+    node.t1(textext("$s_2$"));
+    node.s2(textext("$t_1$"));
+    node.t2(textext("$t_2$"));
+    node.x(textext("$x$"));
+    s1.c = (2u, 5u);
+    x.c = (2u, 4u);
+    t1.c = (2u, 0u);
+    s2.c = (0.5u, 2u);
+    t2.c = (4u, 2u);
+    drawboxed(s1, t1, s2, t2, x);
+    draw arc(s1)(--)(x);
+    draw arc(x)({(-10,-1)}..)(t1);
+    draw arc(s2)({(1,1)}..{(1,1)})(t2);
+endfig;
 end.

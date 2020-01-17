@@ -15,8 +15,8 @@ MAINTEX="0-main"
 
 pushd $TEX/$IMG
 rm !(*.mp);
-mpost *.mp || exit 1
-mpost *.mp || exit 1
+mpost pic.mp || exit 1
+mpost pic.mp || exit 1
 popd
 
 mv $TEX/$IMG/!(*.mp) .
