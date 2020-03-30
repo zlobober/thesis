@@ -72,7 +72,7 @@ ExYV(x, u, s_1, t_1, t_2) = \chi[F(t_1, x, t_2)]^T \psi(x, u, t_2, s_1) \label{e
 
 Using the new formula, we may calculate $ExYV(x, u, s_1, t_1, t_2)$ in time $\OO(|V|)$, so the total time of calculating all $ExYV(x, u, s_1, t_1, t_2)$ becomes $\OO(|V|^6)$.
 
-As in the previous section, we provide the pseudocode for our approach (Algoritm \ref{alg:n6}) and analyze its running time and space complexity.
+As in the previous section, we provide the pseudocode for our approach (Algoritm \ref{alg:n6}) and analyze its running time and space complexity (proofs are in Appendix 3).
 
 \begin{algorithm}
 \caption{Calculation of all $ExYV(x, u, s_1, t_1, t_2)$ in $\OO(|V|^6)$} \label{alg:n6}
@@ -97,22 +97,14 @@ As in the previous section, we provide the pseudocode for our approach (Algoritm
 \begin{proposition}
 The total running time of $\textsc{CalculateAllExYVValues}$ for all $d = 0, \ldots, |V|-1$ is $\OO(|V|^6)$. 
 \end{proposition}
-\begin{proof}
-In the first outer loop, each pair $(u, t_2)$ is processed for exactly one value of $d = l(u, t_2) + 1$, so the total running time of the first loop does not exceed the number of quadruples $(u, t_2, x, s_1)$ multiplied by the running time of $\OO(|V|^2)$ of line \ref{line:psi} yielding the upper bound of $\OO(|V|^6)$.
-
-In the second outer loop, each pair $(s_1, t_1)$ is processed for exactly one value of $d = l(s_1, t_1)$, so the total running time of the second loop does not exceed the number of quintuples $(s_1, t_1, x, u, t_2)$ multiplied by the running time $\OO(|V|)$ of line \ref{line:ExYVpsi} yielding the same upper bound of $\OO(|V|^6)$.
-\end{proof}
 
 \begin{proposition}
 The total memory usage of Algorithm \ref{alg:n6} is $\OO(|V|^5)$.
 \end{proposition}
-\begin{proof}
-In addition to the memory required for \ref{alg:n7}, we also need a 4-dimensional array of vectors $\psi$, which requires $\OO(|V|^5)$ memory.
-\end{proof}
 
 Hence the final result of this section is the following theorem:
 \begin{theorem}
-Algorithm \ref{alg:n6} calculates predicate $2DSP(s_1, t_1, s_2, t_2)$ forr all quadruples $(s_1, t_1, s_2, t_2)$ in time $O(|V|^6)$ using $\Theta(|V|^5)$ memory. 
+Algorithm \ref{alg:n6} calculates predicate $2DSP(s_1, t_1, s_2, t_2)$ for all quadruples $(s_1, t_1, s_2, t_2)$ in time $O(|V|^6)$ using $\Theta(|V|^5)$ memory. 
 \end{theorem}
 
 Let us also note an interesting feature of the obtained algorithm. In line \ref{line:psi} we repeatedly multiply the same matrix by a large number of column vectors. For each matrix, if we group $\OO(|V|)$ possible vectors into a separate matrix, the desired procedure becomes expressible in terms of matrix multiplication, which may be done more efficiently in time $\OO(|V|^\omega)$ with $\omega < 2.3727$ (\cite{Williams}). But even if we use this observation and reduce the running time of this part of the algorithm to $\OO(|V|^{{3 + \omega}})$, computing the values of $Q_2$ (which takes $\OO(|V|^6)$ time in total) becomes the bottleneck.

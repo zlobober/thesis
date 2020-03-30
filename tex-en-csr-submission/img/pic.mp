@@ -43,7 +43,7 @@ endfig;
 beginfig(2)
     pair p[];
     R := 7u;
-    r := 1.4u;
+    r := 2.5u;
     pair O;
     O := (5u, 5u);
     p[0] := O + R * (cosd(-45), sind(-45));
@@ -69,22 +69,22 @@ beginfig(2)
     draw p[6] -- p[1];
     draw p[1] -- p[3];
     draw p[1] -- p[2];
-    draw thelabel(textext("$s_1$"), (0,0)) scaled 0.1u shifted (p[4] + (p[4] - O) * 0.2);
-    draw thelabel(textext("$t_1$"), (0,0)) scaled 0.1u shifted (p[7] + (p[7] - O) * 0.2);
-    draw thelabel(textext("$s_2$"), (0,0)) scaled 0.1u shifted (p[5] + (p[5] - O) * 0.2);
-    draw thelabel(textext("$t_2$"), (0,0)) scaled 0.1u shifted (p[9] + (p[9] - O) * 0.2);
+    draw thelabel(textext("$s_1$"), (0,0)) scaled 0.2u shifted (p[4] + (p[4] - O) * 0.35);
+    draw thelabel(textext("$t_1$"), (0,0)) scaled 0.2u shifted (p[7] + (p[7] - O) * 0.35);
+    draw thelabel(textext("$s_2$"), (0,0)) scaled 0.2u shifted (p[5] + (p[5] - O) * 0.35);
+    draw thelabel(textext("$t_2$"), (0,0)) scaled 0.2u shifted (p[9] + (p[9] - O) * 0.35);
 
     for i = 0 upto 9:
         fill fullcircle scaled r shifted p[i] withcolor white;
         draw fullcircle scaled r shifted p[i];
-        draw thelabel(textext("$v_" & decimal i & "$"), (0,0)) scaled 0.1u shifted p[i];
+        draw thelabel(textext("$v_" & decimal i & "$"), (0,0)) scaled 0.2u shifted p[i];
     endfor;
 endfig;
 
 beginfig(3)
-    u := 1cm;
+    u := 0.7cm;
 
-    noderadius := 0.3u;
+    noderadius := 0.5u;
     node.x(textext("$x$"));
     node.a(textext("$a$"));
     node.b(textext("$b$"));
@@ -104,7 +104,6 @@ beginfig(3)
     drawboxed(x, a, b, c, d, y, zz, e);
     draw arc(x)(--)(a);
     draw arc(x)(--)(b);
-    draw arc(a)(--)(b);
     draw arc(a)(--)(c);
     draw arc(a)(--)(d);
     draw arc(b)(--)(d);

@@ -1,5 +1,7 @@
 \section{Experimental evaluation}
 
+First of all, we would like to make a disclaimer. We do not claim that our algorithm runs significantly faster on any graph of reasonable size (tens of vertices) as on small inputs the running time depends more on hidden constant, rather than on the power of complexity polynomial. Still, we believe that experimental evaluation is an important part of presenting the algorithm since it allows to test theoretical results on lots of small cases and sometimes shows mistakes that may be hard to found by checking the formal proof. 
+
 We implemented 4 algorithms:
 
 \begin{itemize}
@@ -34,11 +36,11 @@ All mentioned algorithms were implemented as the routines in a single program, a
 
 As a next step, we ran $10^4$ instances of a program at the computational cluster of Yandex company, each of which evaluated $10^5$ random $10$-vertex graphs and assered that all implemented algorithms  produce the same result. Such stress test discovered a few more mistakes in the implementation of the original algorithm \ref{alg:n8} and its optimized versions. Interesting detail was that all of the mistakes were located exactly in the hardest case of rigid quadruple $(s_1, t_1, s_2, t_2)$ (formula \eqref{eq:Q4}). Hence, we can conclude that the minimum size of the graph, that triggers the hardest case of the approach of Eilam-Tzoreff is either $9$ or $10$. An example of a ``complex'' graph $H$ consisting of $10$ vertices, for which the transitions defined by the formula \eqref{eq:Q4} are important, is provided on a picture \ref{pic:hard}.
 
-\begin{figure}[H]
+\begin{figure}
 \caption{Graph $H$}
 \label{pic:hard}
 \centering
-\includegraphics[width=0.4\textwidth]{pic.2}
+\includegraphics[width=0.25\textwidth]{pic.2}
 \end{figure}
 
 After fixing all mistakes, we evaluated the algorithms using $10^4$ program instances processing $1000$ random graphs with $20$ vertices (without using the algorithm \ref{alg:brute}) and then processing $100$ graphs with $30$ vertices (without using algorithms \ref{alg:brute}, \ref{alg:n6}). The final evaluation did not show any discrepancy between the implemented algorithm results.

@@ -176,44 +176,27 @@ The only remaining step is to verify that we can organize the calculations in an
 \end{algorithmic}
 \end{algorithm}
 
+Due to the restriction on paper size, proofs of the following propositions (which are quite technical and straightforward) are moved to Appendix 3.
+
 \begin{proposition} \label{n7_corr1}
 By the moment of calling $\textsc{CalculateAllExYVValues}(d)$, all needed values of $2DSP$ are already calculated.
 \end{proposition}
-\begin{proof}
-Note that $\textsc{CalculateAllExYVValues}(d)$ operates only with values of $2DSP(x, y, u, v)$ for $(x, y, u, v)$ s.t. $x \in F(s_1, t_1)$ and $y \in F(t_1,x,t_2) \subseteq F(t_1, x)$, i.e. $l(x, y) = l(s_1, t_1) - 2 = d - 2$, and hence, $\min\{l(x, y), l(u, v)\} \leq l(x, y) = d - 2 < d$. Also note that the only call to $\textsc{CalculateAllExYVValues}(d)$ is located at line \ref{line:calcExYV} and the argument $d$ is equal to $d_{\min}$. This means that the values of $2DSP(x, y, u, v)$ for quadruples $(x, y, u, v)$ s.t. $\min\{l(x, y), l(u, v)\} < d$ are already calculated. 
-\end{proof}
 
 \begin{proposition} \label{n7_corr2}
 By the moment line \ref{line:useExYV} of Algorithm \ref{alg:n7} is run, all needed values of $ExYV$ are already calculated.
 \end{proposition}
-\begin{proof}
-Due to Lemma \ref{eql}, we know that $l(s_1, t_1)$, $l(s_2, t_2)$ are equal, so they should both be equal to $d_{\min}$. The last call to $\textsc{CalculateAllExYVValues}$ was for $d = d_{\min}$, so all values of $ExYV(\cdot, \cdot, s, t, \cdot)$ for all $(s, t)$ s.t. $l(s, t) \leq d_{\min}$ are already calculated. Finally note the fact that the third and the fourth arguments of a predicate $ExYV$ in line \ref{line:useExYV} may only be $(s_1, t_1)$ and $(s_2, t_2)$.
-\end{proof}
-
-Let us estimate the complexity of the obtained algorithm.
 
 \begin{proposition} \label{n7_rt1}
 The total running time of $\textsc{CalculateAllExYVValues}$ for all $d = 0, \ldots, |V|-1$ is $\OO(|V|^7)$. 
 \end{proposition}
-\begin{proof}
-Note that each pair $(s_1, t_1)$ will be processed only when $d = l(s_1, t_1)$, so the total running time of this procedure does not exceed the number of septuples $(s_1, t_1, x, u, t_2, y, v)$, i.e. $|V|^7$.
-\end{proof}
 
 \begin{proposition} \label{n7_rt2}
 Each call to $\textsc{CalculateSingle2DSPValue}$ takes $\OO(|V|^2)$ time.
 \end{proposition}
-\begin{proof}
-This is obvious from the formula used to process the rigid quadruples in line \ref{line:useExYV}.
-\end{proof}
-
-Let us also estimate the space complexity.
 
 \begin{proposition} \label{n7_m}
 Algorithm \ref{alg:n7} uses $\OO(|V|^5)$ memory.
 \end{proposition}
-\begin{proof}
-In addition to the memory used by the original algorithm, we introduce a new 5-dimensional binary array $ExYV$, which requires $\Theta(|V|^5)$ memory.
-\end{proof}
 
 So, the final result of this section is the following
 \begin{theorem}

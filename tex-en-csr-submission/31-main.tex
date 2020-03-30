@@ -44,10 +44,10 @@ The quadruple $(s_1, t_1, s_2, t_2) \in V^4$ is called \textit{rigid} iff $s_1, 
 \caption{Graph $G$}
 \label{pic:exmp}
 \centering
-\includegraphics[width=0.4\textwidth]{pic.3}
+\includegraphics[width=0.3\textwidth]{pic.3}
 \end{figure}
 
-For this graph it is true that $L(x, y) = \{x, a, b, c, d, y\}$, $L(x, z) = \{x, b, e, z\}$, $F(x, y) = \{a, b\}$, $F(x, z) = \{b, e\}$, $F(x, y, z) = \{b\}$. Quadruple $(x, y, b, c)$ is rigid as $b, c \in L(x, y)$ and $x, y \in L(b, c)$. $2DSP(x, y, b, c) = 0$ as $a$ and $d$ form a cut between $x$ and $y$. At the same time, $2DSP(x, z, b, c) = 1$ as there are paths $(x, e, z)$ and $(b, a, c)$ which are vertex-disjoint.
+For this graph it is true that $L(x, y) = \{x, a, b, c, d, y\}$, $L(x, z) = \{x, b, e, z\}$, $F(x, y) = \{a, b\}$, $F(x, z) = \{b, e\}$, $F(x, y, z) = \{b\}$. Quadruple $(x, y, b, c)$ is rigid as $b, c \in L(x, y)$ and $x, y \in L(b, c)$. $2DSP(x, y, b, c) = 0$ as $a$ and $d$ form a cut between $x$ and $y$. At the same time, $2DSP(x, z, b, c) = 1$ as there are paths $(x, e, z)$ and $(b, d, a, c)$ which are vertex-disjoint.
 
 We will also introduce the following notation simplifying formulae involving predicates. We allow some of the arguments of $2DSP$ to be vertex sets instead of single vertices. In this case, we consider the resulting expression to be the logical disjunction of $2DSP$ over all quadruples, where each component belongs to the corresponding argument set. For example,
 

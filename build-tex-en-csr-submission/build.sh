@@ -19,7 +19,9 @@ mpost pic.mp || exit 1
 mpost pic.mp || exit 1
 popd
 
-mv $TEX/$IMG/!(*.mp) .
+mkdir -p img
+
+mv $TEX/$IMG/!(*.mp) ./img/
 
 pushd $TEX
 
