@@ -12,6 +12,7 @@ cp -r ../tex-en-csr-submission/img archive/img-src
 cp -r ../build-tex-en-csr-submission/img archive/img
 cp ../tex-en-csr-submission/0-main.bib archive/
 cp ../tex-en-csr-submission/splncs04.bst archive/
+cp ./53-algorithms.tex archive/
 
 pushd archive
 zip -r archive.zip *

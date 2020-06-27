@@ -1,0 +1,74 @@
+\section{Algorithm pseudocodes}
+
+This section contains pseudocodes of two algorithms: the original algorithm by Eilam-Tzoref \cite{ET} and modified version of root procedure \textsc{CalculateSingle2DSPValue} for the weighted case extension of our algorithm mentioned in section 6.
+
+\begin{algorithm}
+\caption{Calculation of all values of $2DSP(s_1, t_1, s_2, t_2)$ in $\OO(|V|^8)$} \label{alg:n8}
+\begin{algorithmic}[1]
+\Procedure{CalculateAll2DSPValues}{$V$, $E$}
+\State $l \gets \text{matrix of pairwise distances in }G$ \label{line:floyd}
+\LineComment{Group pairs of vertices according to the distance between them.}
+\State $P_i \gets \text{empty list for all }i = 0, \ldots, |V|-1$
+\For{$s,t \in V$}
+    \State $\text{Append }(s, t)\text{ to }P_{l(s, t)}$
+\EndFor
+\LineComment{Calculate values of the predicate in lexicographical order of pairs }
+\LineComment{$(d_{\min}, d_{\max})$, where $d_{\min}$ is for the smallest of the distances}
+\LineComment{between terminal pairs, and $d_{\max}$ is for the largest of them.}
+\For{$d_{\min} \gets 0, \ldots, |V|-1$}
+    \For{$d_{\max} \gets d_{\min}, \ldots, |V|-1$}
+        \For{$(s_1, t_1) \in P_{d_{\min}}$}
+            \For{$(s_2, t_2) \in P_{d_{\max}}$}
+                \State $2DSP(s_1, t_1, s_2, t_2) \gets \textsc{CalculateSingle2DSPValue}(s_1, t_1, s_2, t_2)$
+                \LineComment{Finally use the symmetric nature of our predicate.}
+                \State $2DSP(s_2, t_2, s_1, t_1) \gets 2DSP(s_1, t_1, s_2, t_2)$ 
+            \EndFor
+        \EndFor
+    \EndFor
+\EndFor
+\EndProcedure
+\Statex
+\Procedure{CalculateSingle2DSPValue}{$s_1$, $t_1$, $s_2$, $t_2$}
+\If {$s_1 = t_1 \wedge s_2 = t_2$}
+    \State \Return $s_1 = s_2$ \label{line:a}
+\ElsIf {$(s_1, t_1, s_2, t_2)\text{ is not rigid}$}
+    \State \text{Calculate and return the value according to case (2) of Th~\ref{main_theorem}} \label{line:b} 
+\Else
+    \State $\text{Calculate }Q_2(s_1, t_1, s_2, t_2)\text{ using formula \eqref{eq:Q2}}$ \label{line:cQ2}
+    \State $\text{Calculate }Q_4(s_1, t_1, s_2, t_2)\text{ using formula \eqref{eq:Q4}}$ \label{line:cQ4}
+    \State \Return $Q_2(s_1, t_1, s_2, t_2) \vee Q_4(s_1, t_1, s_2, t_2)$
+\EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{Calculation of $2DSP(s_1, t_1, s_2, t_2)$ for weighted graph in $\OO(|V|^7)$} \label{alg:n7w}
+\begin{algorithmic}[1]
+\Procedure{CalculateAll2DSPValues}{$V$, $E$, $w$}
+\State $l \gets \text{matrix of pairwise distances in }G$
+\State Let uniqued sorted list of distances between all pair of vertices be $d_0, d_1, \ldots, d_{f-1}$
+\LineComment{Group pairs of vertices according to the distance between them.}
+\State $P_d \gets \text{empty list for all }d = d_0, \ldots, d_{f-1}$
+\For{$s,t \in V$}
+    \State $\text{append }(s, t)\text{ to }P_{l(s, t)}$
+\EndFor
+\LineComment{Calculate values of the predicate in lexicographical order of pairs }
+\LineComment{$(d_{\min}, d_{\max})$, where $d_{\min}$ is for the smallest of the distances}
+\LineComment{between terminal pairs, and $d_{\max}$ is for the largest of them.}
+\For{$d_{\min} \gets d_0, \ldots, d_{f-1}$}
+    \State $\textsc{CalculateAllExYVValues}(d_{\min})$
+    \For{$d_{\max} \gets d_{\min}, \ldots, d_{f-1}$}
+        \For{$(s_1, t_1) \in P_{d_{\min}}$}
+            \For{$(s_2, t_2) \in P_{d_{\max}}$}
+                \State $2DSP(s_1, t_1, s_2, t_2) \gets \textsc{CalculateSingle2DSPValue}(s_1, t_1, s_2, t_2)$
+                \LineComment{Finally use the symmetric nature of our predicate.}
+                \State $2DSP(s_2, t_2, s_1, t_1) \gets 2DSP(s_1, t_1, s_2, t_2)$ 
+            \EndFor
+        \EndFor
+    \EndFor
+\EndFor
+\EndProcedure
+\Statex
+\end{algorithmic}
+\end{algorithm}
