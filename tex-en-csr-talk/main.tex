@@ -1,0 +1,409 @@
+\documentclass{beamer} 
+
+%%%BASICS
+\usepackage[utf8]{inputenc}
+\usepackage{csquotes}
+
+%%%START THEME SETTINGS
+\usetheme{Frankfurt}
+%\setbeamertemplate{itemize item}{\color{red}$\blacktriangleright}
+%%%END THEME SETTINGS
+
+\newcommand{\OO}{\mathcal{O}}
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\sm}{\setminus}
+
+\usepackage{mathtools}
+\usepackage{bbm}
+
+\DeclareGraphicsRule{.1}{mps}{*}{}
+\DeclareGraphicsRule{.2}{mps}{*}{}
+\DeclareGraphicsRule{.3}{mps}{*}{}
+\DeclareGraphicsRule{.4}{mps}{*}{}
+
+\makeatletter
+\renewcommand\tagform@[1]{}
+\makeatother
+
+\title[Faster 2DSP]{Faster 2-Disjoint-Shortest-Path Algorithm}
+\institute[MSU \& Yandex]{Moscow State University and Yandex}
+\author{Maxim Akhmedov}
+
+\date{June $x$-th, 2020}
+
+\graphicspath{{img/}}
+
+\begin{document}
+
+\begin{frame}
+	\titlepage
+\end{frame}
+
+\section{Introduction}
+
+\begin{frame}{Disjoint Paths}
+    \begin{itemize}
+        \item There are many combinatorial problems involving disjoint paths in graphs. Consider following setups.
+        \item Given a graph $G = (V, E)$ and $k$ pairs of vertices $(s_i, t_i)$, find a $k$-tuple of paths $P_i$ such that $P_i$ goes from $s_i$ to $t_i$ and:
+        \begin{itemize}
+            \item{}[$k$DP] All paths are pairwise disjoint;
+            \item{}[$k$DSP] All paths are pairwise disjoint and each $P_i$ is one of the shortest $s_i$-$t_i$ paths;
+            \item{}[min-sum $k$DSP] All paths are pairwise disjoint and total length of $P_i$ is minimum possible.
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Previous Works on $k$DP}
+    \begin{itemize}
+        \item Fortune, Hopcroft, Wyllie, 1980 \cite{FHW}: Directed decision-version of $k$DP is NP-complete for any fixed $k \geq 2$.
+        \item Robertson, Seymour, 1985 \cite{RS}: Undirected $k$DP may be done in polynomial time for any fixed $k$. In particular, for $k = 2$ there is $\OO(|E| log |V|)$ alogrithm due to Gustedt, 1994 \cite{Gustedt}.
+        \item Lynch, 1975 \cite{Lynch}: if $k$ is part of input, decision undirected $kDP$ is NP-complete even for planar graphs.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Previous Works on min-sum $k$DSP}
+    \begin{itemize}
+        \item Bj\"{o}rklund, Husfedt, 2014 \cite{BHICALP}: randomized MC algorithm for unweighted undirected min-sum $2$DSP in $\OO(|V|^{11})$.
+        \item Hirai, Namba, 2018 \cite{HN}: randomized approach on top of previous result using T-paths by Gallai and hafians modulo $2^k$.
+        \item Other (typically, algebraical) approaches for certain planar cases (\cite{Datta}, \cite{BHPlanar})
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Eilam-Tzoreff Results on $k$DSP \cite{ET} (1998)}
+    \begin{itemize}
+        \item When $k$ is a part of input, decision version is NP-complete even for unweighted undirected planar graphs.
+        \item There exists a linear time reduction from edge-disjoint $2$DSP to vertex-disjoin $2$DSP.
+        \item For vertex-disjoint $2$DSP there exists an algorithm with running time $\OO(|V|^8)$ and memory $\OO(|V|^4)$.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Our Work}
+    \begin{itemize}
+        \item We improve result by ET by reducing the running time to $\OO(|V|^6)$ in unweighted case and to $\OO(|V|^7)$ in weighted case.
+        \item New algorithm is implemented and tested against original algorithm by Eilam-Tzoreff and naive bruteforce solution.
+    \end{itemize}
+\end{frame}
+
+\section{Definitions}
+
+\begin{frame}{Definitions and Notation}
+    \begin{itemize}
+        \item $G = (V, E)$, undirected loopless graph.
+        \item $w: E \rightarrow \RR_{>0}$, edge weights.
+        \item Length of paths consisting by edges $e_1, e_2, \ldots, e_k$ is $w(e_1) + w(e_2) + \ldots + w(e_k)$.
+        \item $l(x, y)$ is the length of the shortest path between $x$ and $y$; if no path exists, $l(x, y) = +\infty$.
+        \item In particular, $l(x, x) = 0$ for any $x \in V$.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Definitions and Notation}
+    \begin{itemize}
+        \item Let $L(x, y)$ be the set of all vertices $v$, s.t. $v$ belongs to at least one shortest path from $x$ to $y$.
+        \item Equivalently, $L(x, y) = \{v~|~l(x, v) + l(v, y) = l(x, y)\}$.
+        \item In particular, $L(x, x) = \{x\}$ and $L(x, y)$ for $x$ and $y$ in different connected components is $\varnothing$.
+        \item $(s_1, t_1, s_2, t_2)$ is called rigid if $s_1, t_1 \in L(s_2, t_2)$ and $s_2, t_2 \in L(s_1, t_1)$.
+        \item Let $F(x, y)$ be the set of successors of $x$ on at least one shortest path from $x$ to $y$.
+        \item Equivalently $F(x, y) = \{v~|~v \in L(x, y) \wedge (x, v) \in E\}$
+        \item The 3-argument version of $F$ will be useful, define it as follows: $F(x, y, z) = F(x, y) \cap F(x, z)$
+        \item Let $2DSP(s_1, t_1, s_2, t_2)$ be $1$ if there exist two disjoint shortest $(s_1, t_1)$ and $(s_2, t_2)$ paths, and 0 otherwise.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Example}
+    \begin{example}
+        \begin{columns}
+            \begin{column}{0.6\textwidth}
+                \begin{itemize}
+                    \item $L(x, y) = \{x, a, b, c, d, y\}$
+                    \item $L(x, z) = \{x, b, e, z\}$
+                    \item $F(x, y) = \{a, b\}$
+                    \item $F(x, z) = \{b, e\}$
+                    \item $F(x, y, z) = \{b\}$
+                    \item $(x, y, b, c)$ is rigid as $b, c \in L(x, y)$ and $x, y \in L(b, c)$. 
+                    \item $2DSP(x, z, b, c) = 1$, as there are paths $(x, e, z)$ and $(b, d, a, c)$ which are vertex-disjoint.
+                    \item $2DSP(x, y, b, c) = 0$.
+                \end{itemize}
+            \end{column}
+            \begin{column}{0.3\textwidth}
+                \includegraphics[width=\linewidth]{pic.3}
+            \end{column}
+        \end{columns}
+    \end{example}
+\end{frame}
+
+\begin{frame}{Vertex Sets as Arguments}
+    \begin{itemize}
+        \item For binary predicates we will sometimes put vertex sets on the positions of vertex arguments treating result as a disjunction of corresponding expression over all arguments belonging to the set. Consider the following example:
+        \begin{equation*}
+            2DSP(F(s_1, t_1), t_1, s_2, t_2) = \bigvee\limits_{x \in F(s_1, t_1)} 2DSP(x, t_1, s_2, t_2).
+        \end{equation*}
+    \end{itemize}
+\end{frame}
+
+\section{Structure}
+
+\begin{frame}{Structural Theorem}
+    \begin{theorem}
+    For any $s_1, t_1, s_2, t_2 \in V$ one of the following cases applies:
+    \begin{enumerate} 
+        \item If $s_1 = t_1$, $s_2 = t_2$, then $2DSP(s_1, t_1, s_2, t_2)$ is $1$ iff $s_1 \neq s_2$.
+        \item Otherwise, assume $(s_1, t_1, s_2, t_2)$ is not rigid; consider a vertex of a quadruple for which the rigidness condition does not hold. Without loss of generality, suppose that $s_1$ is such a vertex, i.e., $s_1 \notin L(s_2, t_2)$ and $s_1 \neq t_1$. Then $2DSP(s_1, t_1, s_2, t_2) = 2DSP(F(s_1, t_1), s_2, t_2)$.
+        \item Otherwise, define $C = L(s_1, s_2) \cup L(s_2, t_1) \cup L(t_1, t_2) \cup L(t_2, s_1)$. Then $2DSP(s_1, t_1, s_2, t_2) = Q_2(s_1, t_1, s_2, t_2) \vee Q_4(s_1, t_1, s_2, t_2)$ where $Q_2$ and $Q_4$ are defined as follows:    
+    \end{enumerate}
+    \end{theorem}
+\end{frame}
+
+\begin{frame}{$Q_2$: Scary, but Computationally Easy}
+\begin{columns}
+\begin{column}{0.65\textwidth}
+\tiny
+\begin{align}
+Q_2(s_1, t_1, s_2, t_2) =\hspace{-1cm}\\
+    2DSP(&& s_1              ,&& F(t_1, s_1, s_2) ,&& s_2              ,&& F(t_2, s_2, s_1) &)~\vee \\
+    2DSP(&& F(s_1, t_1, s_2) ,&& t_1              ,&& s_2              ,&& F(t_2, s_2, t_1) &)~\vee \\
+    2DSP(&& s_1              ,&& F(t_1, s_1, t_2) ,&& F(s_2, t_2, s_1) ,&& t_2              &)~\vee \\
+    2DSP(&& F(s_1, t_1, t_2) ,&& t_1              ,&& F(s_2, t_2, t_1) ,&& t_2              &)~\vee \\[0.4cm]
+    %
+    2DSP(&& F(s_1, t_1) \sm C,&& t_1              ,&& F(s_2, t_2) \sm C,&& t_2              &)~\vee \\ 
+    2DSP(&& F(s_1, t_1) \sm C,&& t_1              ,&& s_2              ,&& F(t_2, s_2) \sm C&)~\vee \\ 
+    2DSP(&& s_1              ,&& F(t_1, s_1) \sm C,&& F(s_2, t_2) \sm C,&& t_2              &)~\vee \\ 
+    2DSP(&& s_1              ,&& F(t_1, s_1) \sm C,&& s_2              ,&& F(t_2, s_2) \sm C&)~\vee \\[0.4cm]
+    %
+    2DSP(&& s_1              ,&& F(t_1, s_1, s_2) ,&& s_2              ,&& F(t_2, s_2) \sm C&)~\vee \\
+    2DSP(&& s_1              ,&& F(t_1, s_1, t_2) ,&& F(s_2, t_2) \sm C,&& t_2              &)~\vee \\
+    2DSP(&& F(t_1, s_1, s_2) ,&& t_1              ,&& s_2              ,&& F(t_2, s_2) \sm C&)~\vee \\
+    2DSP(&& F(t_1, s_1, t_2) ,&& t_1              ,&& F(s_2, t_2) \sm C,&& t_2              &)~\vee \\
+    2DSP(&& s_1              ,&& F(t_1, s_1) \sm C,&& s_2              ,&& F(t_2, s_2, s_1) &)~\vee \\
+    2DSP(&& F(s_1, t_1) \sm C,&& t_1              ,&& s_2              ,&& F(t_2, s_2, t_1) &)~\vee \\
+    2DSP(&& s_1              ,&& F(t_1, s_1) \sm C,&& F(s_2, t_2, s_1) ,&& t_2              &)~\vee \\
+    2DSP(&& F(s_1, t_1) \sm C,&& t_1              ,&& F(s_2, t_2, t_1) ,&& t_2              &) \label{eq:Q2}
+\end{align}
+\end{column}
+\begin{column}{0.3\textwidth}
+\begin{itemize}
+    \item All expressions contain exactly two arguments that are sets.
+    \item Can be computed in $\OO(|V|^2)$.
+    \item Total computational time over all quadruples is $\OO(|V|^6)$
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{$Q_4$: Not So Scary, but Computationally Hard}
+\small
+\begin{multline}
+    Q_4(s_1, t_1, s_2, t_2) = \quad
+        \smashoperator{\bigvee_{
+        \small \substack{
+            x \in F(s_1, s_2)\\ 
+            y \in F(t_1, t_2)\\ 
+            u \in F(s_2, t_1)\\ 
+            v \in F(t_2, s_1)\\ 
+            l(s_1, x) + l(x, y) + l(y, t_1) = l(s_1, t_1)\\ 
+            l(s_2, u) + l(u, v) + l(v, t_2) = l(s_2, t_2)
+        }
+        }} 2DSP(x, y, u, v)
+        \quad\quad\vee\quad\quad
+        \smashoperator{\bigvee_{
+        \small \substack{
+            x \in F(s_1, t_2)\\ 
+            y \in F(t_1, s_2)\\ 
+            u \in F(s_2, s_1)\\ 
+            v \in F(t_2, t_1)\\ 
+            l(s_1, x) + l(x, y) + l(y, t_1) = l(s_1, t_1)\\ 
+            l(s_2, u) + l(u, v) + l(v, t_2) = l(s_2, t_2)
+        }
+        }} 2DSP(x, y, u, v) \label{eq:Q4} 
+\end{multline}
+\begin{itemize}
+    \item Can be computed in $\OO(|V|^4)$.
+    \item There may be up to $\Theta(|V|^4)$ rigid quadruples, thus this part is computationally hardest, taking $\OO(|V|^8)$ in total.
+    \item Important detail: if we swap $(s_1, t_1)$ with $(s_2, t_2)$, one disjunct trasforms into another and vice versa. 
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Dynamic Programming}
+    \begin{itemize}
+        \item All quadruples $(s_1, t_1, s_2, t_2)$ may be ordered according to $l(s_1, t_1) + l(s_2, t_2)$.
+        \item By ordering them in such manner, we enable use of dynamic programming: any value of $2DSP(s_1, t_1, s_2, t_2)$ depends on values with smaller total length between terminals.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Example of Computationally Hard Graph}
+    \begin{columns}
+    \begin{column}{0.4\linewidth}
+    \includegraphics[width=\linewidth]{pic.1}
+    \end{column}
+    \begin{column}{0.6\linewidth}
+    \begin{itemize}
+        \item All $S_i$ have same size $k$, thus $|V| = 8k+1$.
+        \item All edges are present between any two adjacent groups of vertices.
+        \item Any octuple ($s_1, s_2, t_1, t_2, x, y, u, v$) with
+        $s_1 \in S_0$, $s_2 \in S_2$, $t_1 \in S_4$, $t_2 \in S_6$, $x \in S_1$, $u \in S_3$, $y \in S_5$, $v \in S_7$ should be considered in $Q_4$-part of the formula.
+        \item Thus, total running time is $\Theta(|V|^8)$.
+    \end{itemize}
+    \end{column}
+    \end{columns}
+\end{frame}
+
+\section{Step 1: Analyzing DP}
+
+\begin{frame}{Cracking up $Q_4$}
+    \begin{itemize}
+        \item We want to optimize calculation of
+        \begin{equation}
+        \small
+        A(s_1, t_1, s_2, t_2) = \smashoperator{\bigvee_{
+        \small \substack{
+            x \in F(s_1, s_2)\\ 
+            y \in F(t_1, t_2)\\ 
+            u \in F(s_2, t_1)\\ 
+            v \in F(t_2, s_1)\\ 
+            l(s_1, x) + l(x, y) + l(y, t_1) = l(s_1, t_1)\\ 
+            l(s_2, u) + l(u, v) + l(v, t_2) = l(s_2, t_2)
+        }
+        }} 2DSP(x, y, u, v)
+        \end{equation}
+        \item Equivalently, $x$ and $y$ are such that $x \in F(s_1, t_1, s_2)$ and $y \in F(t_1, x, t_2)$; similarly for $u$ and $v$. Thus,
+        \begin{equation} 
+            A(s_1, t_1, s_2, t_2) = \quad
+            {\bigvee_{
+            \large \substack{
+                x \in F(s_1, t_1, s_2)\\ 
+                u \in F(s_2, t_2, t_1) 
+            }
+            }}
+            \quad \underbrace{
+            {\bigvee_{
+            \large \substack{
+                y \in F(t_1, x, t_2)\\ 
+                v \in F(t_2, u, s_1) 
+            }
+            }} 2DSP(x, y, u, v)}_{ExYV(x, u, s_1, t_1, t_2)}
+        \end{equation}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Complexity Analysis}
+    \begin{align} \label{eq:ExYV}
+        A(s_1, t_1, s_2, t_2) = ExYV(F(s_1, t_1, s_2), F(s_2, t_2, t_1), s_1, t_1, t_2)\\
+        ExYV(x, u, s_1, t_1, t_2) = 2DSP(x, F(t_1, x, t_2), u, F(t_2, u, s_1))
+    \end{align}
+    \begin{itemize}
+        \item Both values can be computed in $\OO(|V|^2)$.
+        \item Over all arguments, first value takes $\OO(|V|^6)$ and second value takes $\OO(|V|^7)$ running time.
+        \item Now $ExYV$ is computationally hardest part, but it can be further optimized for unit-weight graphs.
+    \end{itemize}
+\end{frame}
+
+\section{Step 2: Bilinear Forms}
+
+\begin{frame}{Notation}
+    \begin{itemize}
+        \item Enumerate all vertices: $V = \{v_0, v_1, \ldots, v_n\}$.
+        \item Identify subset $S \subseteq V$ with its characteristic vector $\chi[S]$ of length $n$: 
+        \begin{equation}
+            \small
+            (\chi[S])_i = \begin{cases}
+                1, \text{if}~v_i \in S \\
+                0, \text{if}~v_i \notin S \\
+            \end{cases}
+        \end{equation}
+        \item Let's treat $2DSP(x, \cdot, u, \cdot)$ as a $|V| \times |V|$ matrix of a bilinear form.
+        \item Calculating $ExYV$ turns out to be evaluation of bilinear form value on given pair of vectors:
+        \begin{equation}
+            \footnotesize
+            ExYV(x, u, s_1, t_1, t_2) = \mathbbm{1}\left[ \chi[F(t_1, x, t_2)]^T 2DSP(x, \cdot, u, \cdot) \chi[F(t_2, u, s_1)]  > 0 \right]
+        \end{equation}
+        \item But this formula is not suitable for building an algorithm: $2DSP(x, \cdot, u, \cdot)$ is not well-defined as it contains yet to be discovered values. Let's make more careful analysis.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Parametrizing the Minimum Length}
+    \begin{itemize}
+        \item Suppose the values of $2DSP(x, y, u, v)$ for all $(x, y, u, v)$ s.t. $\min\{l(x, y), l(u, v)\} < d$ are already calculated. Define matrix $2DSP(d,x,u) = (2DSP(d,x,u)_{i,j})_{i,j=0,\ldots,n-1}$ as follows
+        \begin{equation}
+            \small
+            2DSP(d,x,u)_{i,j} = \begin{cases}
+                2DSP(x,v_i,u,v_j) & \text{if } l(x,v_i) < d \wedge l(u,v_j) < d \\
+                0                 & \text{otherwise}
+            \end{cases}
+        \end{equation}
+        \item This is a well-defined matrix. Suppose that $l(x, t_1) = l(u, t_2) = d - 1$. Then the following equation holds:
+        \begin{equation}
+            \footnotesize
+            ExYV(x, u, s_1, t_1, t_2) = \mathbbm{1}\left[ \chi[F(t_1, x, t_2)]^T 2DSP(d, x, u) \chi[F(t_2, u, s_1)]  > 0 \right]
+        \end{equation}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Re-Using Partial Products}
+    \begin{itemize}
+        \item Key observation: there are not that many pairs (bilinear form, right hand argument).
+        \item Define $\psi(x, u, t_2, s_1) = 2DSP(l(u, t_2) + 1, x, u) \chi[F(t_2, u, s_1)]$.
+        \item It is defined by four vertices, thus there are $\OO(|V|^4)$ vectors of such form.
+        \item Single $\psi$ value may be calculated in $\OO(|V|^2)$ using the formula above; total running time over all arguments would be $|V|^6$.
+        \item Final form of formula for $ExYV$ now looks like the following:
+        \begin{equation}
+            ExYV(x, u, s_1, t_1, t_2) = \mathbbm{1}\left[ \chi[F(t_1, x, t_2)]^T \psi(x, u, t_2, s_1) \right]        
+        \end{equation}
+        \item Total running time of using this formula over all suitable arguments is now also bounded by $\OO(|V|^6)$.
+    \end{itemize}
+\end{frame}
+
+\section{Experimental Evaluation}
+
+\begin{frame}{Experimental Evaluation}
+    \begin{itemize}
+        \item Speedup from the proposed solution is practically indistinguishable.
+        \item Nonetheless, experimental verification of non-trivial formulae from our work as well as from the original Eilam-Tzoreff article seems important.
+        \item All source codes in C++ are available in a public GitHub repository.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Experimental Evaluation}
+    \begin{itemize}
+        \item Speedup from the proposed solution is practically indistinguishable.
+        \item Nonetheless, practical verification of non-trivial formulae from our work as well as from the original Eilam-Tzoreff article seems important.
+        \item All source codes in C++ are available in a public GitHub repository.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Experimental Evaluation}
+    \begin{itemize}
+        \item We implemented four algorithms:
+        \begin{itemize}
+            \item Original algorithm by Eilam-Tzoreff running in $\OO(|V|^8)$;
+            \item Algorithm working in $\OO(|V|^7)$;
+            \item Algorithm working in $\OO(|V|^6)$;
+            \item Bruteforce alogirhtm in $\OO(2^{|V|} \cdot |V|)$ not relying on Eilam-Tzoreff results.
+        \end{itemize}
+        \item These algorithms were tested against each other on all connected graphs with no more than 8 vertices.
+        \item Also, $10^4$ instances of a program was run on computation cluster of Yandex company, each of which evaluated $10^5$ random 10-vertex graphs using all algorithms.
+        \item After fixing all of the bugs, we ran $10^4$ program, each processing $1000$ graphs with $20$ vertices and $100$ graphs with $30$ vertices.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Hard Graph Example}
+    \begin{columns}
+        \begin{column}{0.7\textwidth}
+            \begin{itemize}
+                \item While evaluating, we also verified that all parts of structural theorem take place. 
+                \item Skipping any of the parts of $Q_2$ leads to mistakes on trivial examples of graphs.
+                \item Smallest graph affected by a mistake in $Q_4$ part is shown on the picture.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.3\textwidth}
+            \includegraphics[width=\linewidth]{pic.2}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\section{References}
+
+\begin{frame}[allowframebreaks]
+    \bibliography{bibliography}{}
+    \bibliographystyle{plain}
+\end{frame}
+
+\end{document}
